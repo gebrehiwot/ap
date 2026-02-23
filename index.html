@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java OOP · complete foundation · class to project + zoom</title>
+    <title>Java OOP · complete foundation · double-click zoom</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * {
@@ -32,7 +32,7 @@
             touch-action: none;
         }
 
-        /* toolbar - now with zoom button */
+        /* toolbar */
         .toolbar {
             position: fixed;
             top: 20px;
@@ -74,12 +74,6 @@
             color: #7a3a0a;
         }
 
-        .toolbar button.zoomBtn {
-            background: #e2f0da;
-            border-color: #2e7d32;
-            color: #1b5e20;
-        }
-
         .toolbar input[type="color"] {
             width: 40px;
             height: 38px;
@@ -95,7 +89,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             z-index: 20000;
             display: none;
             justify-content: center;
@@ -113,6 +107,7 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.5);
             position: relative;
             cursor: default;
+            transition: all 0.2s;
         }
 
         .zoom-box pre, .zoom-box code, .zoom-box p {
@@ -170,6 +165,7 @@
             padding-left: 1.5rem;
             cursor: pointer;
             transition: background 0.2s;
+            user-select: text;
         }
 
         .topic-title:hover {
@@ -189,6 +185,7 @@
             color: #1d3d72;
             margin: 1.5rem 0 0.3rem;
             cursor: pointer;
+            user-select: text;
         }
 
         h4:hover {
@@ -199,6 +196,7 @@
             font-size: 1.25rem;
             margin-bottom: 1rem;
             color: #183c5a;
+            user-select: text;
         }
 
         .code {
@@ -215,6 +213,7 @@
             box-shadow: inset 0 2px 5px #1f3349;
             cursor: pointer;
             transition: transform 0.1s;
+            user-select: text;
         }
 
         .code:hover {
@@ -241,6 +240,7 @@
             margin-bottom: 1rem;
             border: 1px solid #9bb9ed;
             cursor: pointer;
+            user-select: text;
         }
 
         .pill:hover {
@@ -261,6 +261,7 @@
             padding: 2rem;
             border: 1px solid #c0d6f2;
             cursor: pointer;
+            user-select: text;
         }
 
         .two-col > div:hover {
@@ -275,6 +276,7 @@
             margin-top: 2rem;
             border: 2px solid #f5a841;
             cursor: pointer;
+            user-select: text;
         }
 
         .project-box:hover {
@@ -323,17 +325,16 @@
     <button id="penBtn">✏️ DRAW: OFF</button>
     <button id="clearBtn" class="clearBtn">🧽 CLEAR</button>
     <input type="color" id="penColor" value="#d45d00">
-    <button id="zoomToggleBtn" class="zoomBtn">🔍 ZOOM: ON</button>
-    <span style="color:#102b47;">click any text to zoom</span>
+    <span style="color:#102b47;">double‑click any text to zoom · double‑click again to close</span>
 </div>
 
 <div class="zoom-hint">
-    🔍 Zoom mode active — click any text/code to enlarge
+    👆 double‑click text to zoom in · double‑click zoomed text to close
 </div>
 
 <!-- zoom overlay -->
-<div id="zoomOverlay" class="zoom-overlay" onclick="closeZoom()">
-    <div class="zoom-box" id="zoomContent" onclick="event.stopPropagation()">
+<div id="zoomOverlay" class="zoom-overlay" ondblclick="closeZoom()">
+    <div class="zoom-box" id="zoomContent" ondblclick="closeZoom(); event.stopPropagation()">
         <div class="zoom-close" onclick="closeZoom()">✕</div>
         <div id="zoomText"></div>
     </div>
@@ -343,12 +344,12 @@
 
     <!-- ========== SECTION 1: CLASS & OBJECT ========== -->
     <div class="topic">
-        <div class="topic-title" onclick="zoomElement(this)">📦 1. class & object</div>
-        <p><span class="pill" onclick="zoomElement(this)">start here</span> <strong>Class</strong> = blueprint · <strong>Object</strong> = instance in memory.</p>
+        <div class="topic-title" ondblclick="zoomElement(this)">📦 1. class & object</div>
+        <p><span class="pill" ondblclick="zoomElement(this)">start here</span> <strong>Class</strong> = blueprint · <strong>Object</strong> = instance in memory.</p>
         <div class="two-col">
-            <div onclick="zoomElement(this)">
+            <div ondblclick="zoomElement(this)">
                 <h4>📐 class</h4>
-                <div class="code light" onclick="zoomElement(this)">
+                <div class="code light" ondblclick="zoomElement(this)">
 class Student {
     String name;
     int id;
@@ -357,9 +358,9 @@ class Student {
     }
 }</div>
             </div>
-            <div onclick="zoomElement(this)">
+            <div ondblclick="zoomElement(this)">
                 <h4>🧩 objects</h4>
-                <div class="code light" onclick="zoomElement(this)">
+                <div class="code light" ondblclick="zoomElement(this)">
 Student s1 = new Student();
 s1.name = "Alice";
 
@@ -371,9 +372,9 @@ s2.name = "Bob";</div>
 
     <!-- ========== SECTION 2: ENCAPSULATION ========== -->
     <div class="topic">
-        <div class="topic-title" onclick="zoomElement(this)">🔒 2. encapsulation</div>
+        <div class="topic-title" ondblclick="zoomElement(this)">🔒 2. encapsulation</div>
         <p><strong>private fields, public methods</strong> — protect data integrity.</p>
-        <div class="code" onclick="zoomElement(this)">
+        <div class="code" ondblclick="zoomElement(this)">
 public class BankAccount {
     private double balance;
 
@@ -389,27 +390,27 @@ public class BankAccount {
 
     <!-- ========== SECTION 3: INHERITANCE ========== -->
     <div class="topic">
-        <div class="topic-title" onclick="zoomElement(this)">🌿 3. inheritance</div>
+        <div class="topic-title" ondblclick="zoomElement(this)">🌿 3. inheritance</div>
         <p><code>extends</code> — child gets parent members. "is‑a" relationship.</p>
         <div class="two-col">
-            <div onclick="zoomElement(this)">
+            <div ondblclick="zoomElement(this)">
                 <h4>parent</h4>
-                <div class="code light" onclick="zoomElement(this)">class Animal {
+                <div class="code light" ondblclick="zoomElement(this)">class Animal {
     void eat() {
         System.out.println("eating");
     }
 }</div>
             </div>
-            <div onclick="zoomElement(this)">
+            <div ondblclick="zoomElement(this)">
                 <h4>child</h4>
-                <div class="code light" onclick="zoomElement(this)">class Dog extends Animal {
+                <div class="code light" ondblclick="zoomElement(this)">class Dog extends Animal {
     void bark() { }
 }
 // Dog has eat() + bark()</div>
             </div>
         </div>
         <p><strong>super()</strong> calls parent constructor.</p>
-        <div class="code light" onclick="zoomElement(this)">
+        <div class="code light" ondblclick="zoomElement(this)">
 class Vehicle {
     String brand;
     Vehicle(String b) { brand = b; }
@@ -421,20 +422,20 @@ class Car extends Vehicle {
 
     <!-- ========== SECTION 4: POLYMORPHISM ========== -->
     <div class="topic">
-        <div class="topic-title" onclick="zoomElement(this)">🌀 4. polymorphism</div>
+        <div class="topic-title" ondblclick="zoomElement(this)">🌀 4. polymorphism</div>
         <p><strong>many forms</strong> — overloading (compile‑time) & overriding (runtime).</p>
         <div class="two-col">
-            <div onclick="zoomElement(this)">
+            <div ondblclick="zoomElement(this)">
                 <h4>overloading</h4>
-                <div class="code light" onclick="zoomElement(this)">
+                <div class="code light" ondblclick="zoomElement(this)">
 class Calc {
     int add(int a, int b) { return a+b; }
     int add(int a, int b, int c) { return a+b+c; }
 }</div>
             </div>
-            <div onclick="zoomElement(this)">
+            <div ondblclick="zoomElement(this)">
                 <h4>overriding</h4>
-                <div class="code light" onclick="zoomElement(this)">
+                <div class="code light" ondblclick="zoomElement(this)">
 class Cat extends Animal {
     @Override
     void eat() {
@@ -443,16 +444,16 @@ class Cat extends Animal {
 }</div>
             </div>
         </div>
-        <div class="code" onclick="zoomElement(this)">
+        <div class="code" ondblclick="zoomElement(this)">
 Animal[] pets = {new Dog(), new Cat()};
 for (Animal a : pets) a.eat(); // dynamic dispatch</div>
     </div>
 
     <!-- ========== SECTION 5: INTERFACE ========== -->
     <div class="topic">
-        <div class="topic-title" onclick="zoomElement(this)">📄 5. interface</div>
+        <div class="topic-title" ondblclick="zoomElement(this)">📄 5. interface</div>
         <p><strong>contract</strong> — what a class must do. <code>implements</code></p>
-        <div class="code" onclick="zoomElement(this)">
+        <div class="code" ondblclick="zoomElement(this)">
 interface Flyable {
     void fly();
 }
@@ -463,7 +464,7 @@ class Bird implements Flyable {
     }
 }</div>
         <h4>multiple interfaces</h4>
-        <div class="code light" onclick="zoomElement(this)">
+        <div class="code light" ondblclick="zoomElement(this)">
 interface Swimmer { void swim(); }
 interface Runner { void run(); }
 
@@ -475,9 +476,9 @@ class Athlete implements Swimmer, Runner {
 
     <!-- ========== SECTION 6: ABSTRACT CLASS ========== -->
     <div class="topic">
-        <div class="topic-title" onclick="zoomElement(this)">🎭 6. abstract class</div>
+        <div class="topic-title" ondblclick="zoomElement(this)">🎭 6. abstract class</div>
         <p><strong>partial implementation</strong> — can have abstract + concrete methods. cannot instantiate.</p>
-        <div class="code light" onclick="zoomElement(this)">
+        <div class="code light" ondblclick="zoomElement(this)">
 abstract class Shape {
     abstract double area();
     void display() {
@@ -493,25 +494,25 @@ class Circle extends Shape {
 
     <!-- ========== SECTION 7: EXCEPTIONS ========== -->
     <div class="topic">
-        <div class="topic-title" onclick="zoomElement(this)">⚠️ 7. exceptions</div>
+        <div class="topic-title" ondblclick="zoomElement(this)">⚠️ 7. exceptions</div>
         <p><strong>handle errors</strong> — try, catch, finally, throws, throw.</p>
         <div class="two-col">
-            <div onclick="zoomElement(this)">
+            <div ondblclick="zoomElement(this)">
                 <h4>checked</h4>
-                <div class="code light" onclick="zoomElement(this)">
+                <div class="code light" ondblclick="zoomElement(this)">
 try {
     Thread.sleep(1000);
 } catch (InterruptedException e) {
     e.printStackTrace();
 }</div>
             </div>
-            <div onclick="zoomElement(this)">
+            <div ondblclick="zoomElement(this)">
                 <h4>unchecked</h4>
-                <div class="code light" onclick="zoomElement(this)">
+                <div class="code light" ondblclick="zoomElement(this)">
 int x = 10 / 0; // ArithmeticException</div>
             </div>
         </div>
-        <div class="code" onclick="zoomElement(this)">
+        <div class="code" ondblclick="zoomElement(this)">
 try {
     int[] nums = {1,2};
     System.out.println(nums[5]);
@@ -524,11 +525,11 @@ try {
 
     <!-- ========== FINAL INTEGRATED PROJECT ========== -->
     <div class="topic" style="background: #e7f0ff;">
-        <div class="topic-title" onclick="zoomElement(this)">🚀 FINAL PROJECT: Zoo Management System</div>
-        <p class="pill" style="background:#f5a841; color:#132e4f;" onclick="zoomElement(this)">brings everything together</p>
-        <div class="project-box" onclick="zoomElement(this)">
+        <div class="topic-title" ondblclick="zoomElement(this)">🚀 FINAL PROJECT: Zoo Management System</div>
+        <p class="pill" style="background:#f5a841; color:#132e4f;" ondblclick="zoomElement(this)">brings everything together</p>
+        <div class="project-box" ondblclick="zoomElement(this)">
             <h3>🐘 ZooApp – classes, encapsulation, inheritance, interface, polymorphism, exceptions</h3>
-            <div class="code" style="color:#eef5ff;" onclick="zoomElement(this)">
+            <div class="code" style="color:#eef5ff;" ondblclick="zoomElement(this)">
 // --- interfaces ---
 interface Feedable {
     void feed(String food) throws Exception;
@@ -621,8 +622,8 @@ public class Zoo {
 
     <!-- recap flow -->
     <div class="topic">
-        <div class="topic-title" onclick="zoomElement(this)">📋 full foundation recap</div>
-        <div style="display:grid; grid-template-columns:1fr 2fr; gap:1rem; background:#e9f2ff; border-radius:36px; padding:2rem;" onclick="zoomElement(this)">
+        <div class="topic-title" ondblclick="zoomElement(this)">📋 full foundation recap</div>
+        <div style="display:grid; grid-template-columns:1fr 2fr; gap:1rem; background:#e9f2ff; border-radius:36px; padding:2rem;" ondblclick="zoomElement(this)">
             <div><strong>class/object</strong></div><div>blueprint + instance</div>
             <div><strong>encapsulation</strong></div><div>private + getters/setters</div>
             <div><strong>inheritance</strong></div><div>extends, super()</div>
@@ -634,40 +635,40 @@ public class Zoo {
     </div>
 
     <footer>
-        👨‍🏫 from class & object → exceptions → final integrated Zoo project. Click any text to zoom.
+        👨‍🏫 from class & object → exceptions → final integrated Zoo project. Double-click any text to zoom in/out.
     </footer>
 </div>
 
 <script>
-    // Zoom functionality
+    // Zoom functionality with double-click toggle
     const zoomOverlay = document.getElementById('zoomOverlay');
     const zoomText = document.getElementById('zoomText');
-    let zoomEnabled = true;
+    let currentZoomElement = null;
 
-    // Toggle zoom button
-    const zoomToggleBtn = document.getElementById('zoomToggleBtn');
-    zoomToggleBtn.addEventListener('click', () => {
-        zoomEnabled = !zoomEnabled;
-        zoomToggleBtn.textContent = zoomEnabled ? '🔍 ZOOM: ON' : '🔍 ZOOM: OFF';
-        zoomToggleBtn.style.background = zoomEnabled ? '#e2f0da' : '#f0d0d0';
-    });
-
-    // Zoom function
+    // Zoom function - double click toggles
     window.zoomElement = function(element) {
-        if (!zoomEnabled) return;
+        // If overlay is already showing and this is the same element, close it
+        if (zoomOverlay.style.display === 'flex' && currentZoomElement === element) {
+            closeZoom();
+            return;
+        }
         
+        // Otherwise show the new element
         // Clone the element content
         const content = element.cloneNode(true);
         
-        // Remove onclick handlers from cloned content to avoid recursion
+        // Remove ondblclick handlers from cloned content to avoid recursion
         const allElements = content.querySelectorAll('*');
         allElements.forEach(el => {
-            el.removeAttribute('onclick');
+            el.removeAttribute('ondblclick');
         });
         
         // Clear and set new content
         zoomText.innerHTML = '';
         zoomText.appendChild(content);
+        
+        // Store current element
+        currentZoomElement = element;
         
         // Show overlay
         zoomOverlay.style.display = 'flex';
@@ -675,6 +676,7 @@ public class Zoo {
 
     window.closeZoom = function() {
         zoomOverlay.style.display = 'none';
+        currentZoomElement = null;
     };
 
     // Close on escape key
