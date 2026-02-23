@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java OOP Mastery - Prep Class Advanced Programming</title>
+    <title>Java OOP Mastery - Advanced Prep 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #5382a1; /* Java Blue */
-            --secondary: #f89820; /* Java Orange */
+            --primary: #5382a1;
+            --secondary: #f89820;
             --dark: #2c3e50;
             --light: #ecf0f1;
             --success: #27ae60;
+            --danger: #e74c3c;
         }
 
         body {
@@ -20,7 +21,7 @@
             color: var(--dark);
             background-color: #f4f7f6;
             margin: 0;
-            padding: 0;
+            user-select: none; /* Prevents text selection while drawing */
         }
 
         header {
@@ -31,11 +32,7 @@
             clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
         }
 
-        .container {
-            max-width: 900px;
-            margin: -50px auto 50px;
-            padding: 20px;
-        }
+        .container { max-width: 1000px; margin: -50px auto 50px; padding: 20px; position: relative; z-index: 1; }
 
         .card {
             background: white;
@@ -46,8 +43,16 @@
         }
 
         h2 { color: var(--primary); border-left: 5px solid var(--secondary); padding-left: 15px; }
+        
+        .badge {
+            background: var(--secondary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            vertical-align: middle;
+        }
 
-        /* Code Block Styling */
         pre {
             background: #282c34;
             color: #abb2bf;
@@ -55,154 +60,216 @@
             border-radius: 8px;
             overflow-x: auto;
             font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            border-left: 4px solid var(--secondary);
         }
 
-        .pillar-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .pillar-item {
-            background: var(--light);
-            padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-
-        .pillar-item:hover { transform: translateY(-5px); background: #e8f4fd; }
-
-        /* Interactive Quiz */
-        .quiz-container { background: #fff; border: 2px solid var(--primary); }
-        .question { font-weight: 600; margin-bottom: 1rem; font-size: 1.1rem; }
-        .option {
-            display: block;
+        /* Drawing Canvas Overlay */
+        #whiteboard {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            cursor: pointer;
-            background: #fff;
-            transition: 0.2s;
+            height: 100%;
+            z-index: 999;
+            pointer-events: none; /* Off by default */
+            cursor: crosshair;
         }
-        .option:hover { background: #f0f0f0; }
-        .correct { background: var(--success) !important; color: white; border-color: var(--success); }
-        .wrong { background: #e74c3c !important; color: white; border-color: #e74c3c; }
 
-        footer { text-align: center; padding: 2rem; color: #7f8c8d; }
+        .toolbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .tool-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tool-btn.active { background: var(--secondary); border-color: var(--secondary); }
+
+        .pillar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .advanced-note { background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin: 10px 0; font-size: 0.9rem; }
+
+        /* Quiz UI */
+        .option { display: block; width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; text-align: left; }
+        .correct { background: var(--success) !important; color: white; }
+        .wrong { background: var(--danger) !important; color: white; }
     </style>
 </head>
 <body>
 
+<canvas id="whiteboard"></canvas>
+
+<div class="toolbar">
+    <button class="tool-btn" id="toggleDraw">🖋️ Marker Off</button>
+    <button class="tool-btn" onclick="clearCanvas()">🗑️ Clear Drawing</button>
+    <div style="color: white; border-left: 1px solid #555; padding-left: 15px; display: flex; align-items: center; font-size: 0.8rem;">
+        Teaching Mode
+    </div>
+</div>
+
 <header>
-    <h1>Java OOP Foundations</h1>
-    <p>Essential Concepts for Advanced Programming</p>
+    <h1>Advanced Java OOP Review</h1>
+    <p>Bridging the Gap Between Syntax and Architecture</p>
 </header>
 
 <div class="container">
     <section class="card">
-        <h2>The Blueprint Analogy</h2>
-        <p> <strong>Classes</strong> are the architectural drawings (Blueprints), and <strong>Objects</strong> are the actual buildings constructed from them.</p>
-        
-        <div class="pillar-grid">
-            <div class="pillar-item"><strong>Encapsulation</strong><br>🔒 Safe Data</div>
-            <div class="pillar-item"><strong>Inheritance</strong><br>🌳 Reuse Code</div>
-            <div class="pillar-item"><strong>Abstraction</strong><br>🕹️ Simple Interface</div>
-            <div class="pillar-item"><strong>Polymorphism</strong><br>🎭 Many Forms</div>
+        <h2>1. Encapsulation & State Integrity</h2>
+        <p>In advanced programming, encapsulation isn't just about private variables; it's about <strong>protecting invariants</strong>.</p>
+        <div class="advanced-note">
+            <strong>Advanced Tip:</strong> Mention <em>Defensive Copying</em>. If you return a <code>Date</code> or <code>List</code> object via a getter, the caller can modify your internal state even if the variable is private!
         </div>
-    </section>
-
-    <section class="card">
-        <h2>Live Demonstration</h2>
-        <p>Explain how these 4 pillars work together in a single Java file:</p>
-
 <pre>
-// ABSTRACTION: The generic idea
-abstract class BankAccount {
-    private double balance; // ENCAPSULATION
+public class SmartAccount {
+    private double balance;
 
-    public BankAccount(double amount) { this.balance = amount; }
-    
-    public double getBalance() { return balance; }
-    public abstract void applyBonus(); 
-}
-
-// INHERITANCE
-class StudentAccount extends BankAccount {
-    public StudentAccount(double b) { super(b); }
-
-    @Override // POLYMORPHISM
-    public void applyBonus() {
-        System.out.println("No fees for students!");
+    // Logic-based update (Involved Encapsulation)
+    public void deposit(double amount) {
+        if (amount > 0) {
+            this.balance += amount;
+        }
     }
 }</pre>
     </section>
 
-    <section class="card quiz-container">
-        <h2>Knowledge Check</h2>
+    <section class="card">
+        <h2>2. Abstraction: Contractual Design</h2>
+        <p>Explain that <strong>Abstract Classes</strong> define an identity (is-a), while <strong>Interfaces</strong> define a capability (can-do).</p>
+        
+        <div class="pillar-grid">
+            <div class="pillar-item">
+                <strong>Abstract Class</strong>
+                <ul style="font-size: 0.8rem; text-align: left;">
+                    <li>Can hold state (fields)</li>
+                    <li>Constructors allowed</li>
+                    <li>Shared base logic</li>
+                </ul>
+            </div>
+            <div class="pillar-item">
+                <strong>Interface</strong>
+                <ul style="font-size: 0.8rem; text-align: left;">
+                    <li>Stateless (constants only)</li>
+                    <li>Multiple inheritance possible</li>
+                    <li>Pure behavioral contract</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>3. Advanced Competency Test</h2>
         <div id="quiz">
-            <div class="question" id="q-text">Loading question...</div>
+            <div class="question" id="q-text">Loading...</div>
             <div id="options"></div>
-            <p id="feedback" style="margin-top: 15px; font-weight: bold;"></p>
+            <p id="feedback"></p>
         </div>
     </section>
 </div>
 
 <footer>
-Advanced Programming Course-Pre-class-oop Review @2026
+    Advanced Java Architecture Prep | Instructor Tool &copy; 2026
 </footer>
 
 <script>
+    // --- DRAWING LOGIC ---
+    const canvas = document.getElementById('whiteboard');
+    const ctx = canvas.getContext('2d');
+    const toggleBtn = document.getElementById('toggleDraw');
+    let drawing = false;
+    let isEnabled = false;
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.onresize = resize;
+    resize();
+
+    toggleBtn.onclick = () => {
+        isEnabled = !isEnabled;
+        canvas.style.pointerEvents = isEnabled ? 'auto' : 'none';
+        toggleBtn.innerText = isEnabled ? '🖋️ Marker On' : '🖋️ Marker Off';
+        toggleBtn.classList.toggle('active');
+    };
+
+    canvas.onmousedown = () => drawing = true;
+    canvas.onmouseup = () => { drawing = false; ctx.beginPath(); };
+    canvas.onmousemove = (e) => {
+        if (!drawing || !isEnabled) return;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#e74c3c';
+        ctx.lineTo(e.clientX, e.clientY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(e.clientX, e.clientY);
+    };
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // --- QUIZ LOGIC ---
     const quizData = [
         {
-            q: "Which keyword is used to implement Inheritance in Java?",
-            options: ["implements", "extends", "inherits", "super"],
-            correct: 1
+            q: "A class implements an Interface to define capability. Why is this better than multiple inheritance of classes?",
+            options: [
+                "It avoids the 'Diamond Problem' of conflicting implementations.",
+                "Interfaces make the code run faster in the JVM.",
+                "Abstract classes cannot have methods.",
+                "There is no difference."
+            ],
+            correct: 0
         },
         {
-            q: "Using 'private' variables with 'public' getters is which pillar?",
-            options: ["Abstraction", "Polymorphism", "Encapsulation", "Inheritance"],
-            correct: 2
+            q: "In Polymorphism, which implementation is called: The one defined by the Reference Type or the Object Type?",
+            options: [
+                "Reference Type (Compile time)",
+                "Object Type (Runtime)",
+                "Always the Parent Class",
+                "Whatever is specified in the Interface"
+            ],
+            correct: 1
         }
     ];
 
     let currentQ = 0;
-
     function loadQuiz() {
         const q = quizData[currentQ];
         document.getElementById('q-text').innerText = q.q;
         const optionsDiv = document.getElementById('options');
         optionsDiv.innerHTML = '';
-        document.getElementById('feedback').innerText = '';
-
         q.options.forEach((opt, i) => {
             const btn = document.createElement('button');
             btn.className = 'option';
             btn.innerText = opt;
-            btn.onclick = () => checkAnswer(i, btn);
+            btn.onclick = (e) => {
+                if(i === q.correct) {
+                    e.target.classList.add('correct');
+                    setTimeout(() => { currentQ = (currentQ + 1) % quizData.length; loadQuiz(); }, 1500);
+                } else {
+                    e.target.classList.add('wrong');
+                }
+            };
             optionsDiv.appendChild(btn);
         });
     }
-
-    function checkAnswer(idx, btn) {
-        const correct = quizData[currentQ].correct;
-        if(idx === correct) {
-            btn.classList.add('correct');
-            document.getElementById('feedback').innerText = "✅ Correct! Well done.";
-            setTimeout(() => {
-                currentQ = (currentQ + 1) % quizData.length;
-                loadQuiz();
-            }, 1500);
-        } else {
-            btn.classList.add('wrong');
-            document.getElementById('feedback').innerText = "❌ Try again!";
-        }
-    }
-
     loadQuiz();
 </script>
 
