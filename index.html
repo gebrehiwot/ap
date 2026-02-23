@@ -3,518 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java OOP: Advanced Concepts & Interactive Whiteboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Java OOP: Practical Review & Interactive Whiteboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #5382a1; /* Java Blue */
-            --secondary: #f89820; /* Java Orange */
-            --dark: #2c3e50;
-            --light: #ecf0f1;
-            --success: #27ae60;
-            --danger: #e74c3c;
-            --info: #3498db;
+            --primary: #2c3e50;
+            --accent: #f39c12;
+            --code-bg: #1e1e1e;
+            --java-blue: #5382a1;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            line-height: 1.7;
-            color: var(--dark);
-            background-color: #f4f7f6;
+            background-color: #f0f2f5;
             margin: 0;
             padding: 0;
-            user-select: none; /* Prevent text selection while drawing */
+            color: #333;
+            overflow-x: hidden;
         }
 
-        header {
-            background: linear-gradient(135deg, var(--primary), #35495e);
+        /* Teaching Canvas Overlay */
+        #whiteboard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999;
+            pointer-events: none; /* Disabled by default */
+            cursor: crosshair;
+        }
+
+        /* Fixed Toolbar */
+        .toolbar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            padding: 12px 25px;
+            border-radius: 50px;
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            align-items: center;
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid white;
             color: white;
-            padding: 4rem 2rem;
-            text-align: center;
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: -50px auto 50px;
+        .btn.active { background: var(--accent); border-color: var(--accent); }
+
+        /* Content Layout */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .content {
+            max-width: 900px;
+            margin: -40px auto 100px;
             padding: 20px;
             position: relative;
             z-index: 1;
         }
 
-        .card {
+        .lesson-card {
             background: white;
-            padding: 2.5rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 2.5rem;
-            position: relative; /* For drawing canvases */
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
         }
 
-        h2 { color: var(--primary); border-left: 5px solid var(--secondary); padding-left: 15px; margin-top: 0; }
-        h3 { color: var(--dark); border-bottom: 1px dashed var(--light); padding-bottom: 5px; margin-top: 2rem; }
-        
-        .badge {
-            background: var(--secondary);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            vertical-align: middle;
-            margin-left: 5px;
-        }
+        h2 { color: var(--java-blue); border-bottom: 2px solid #eee; padding-bottom: 10px; }
 
         pre {
-            background: #282c34;
-            color: #abb2bf;
-            padding: 1.5rem;
+            background: var(--code-bg);
+            color: #d4d4d4;
+            padding: 20px;
             border-radius: 8px;
-            overflow-x: auto;
             font-family: 'Fira Code', monospace;
-            font-size: 0.95rem;
-            border-left: 4px solid var(--secondary);
-            margin-bottom: 1.5rem;
+            font-size: 14px;
+            overflow-x: auto;
+            border-left: 5px solid var(--accent);
         }
 
-        .advanced-note {
-            background: #fff3e0;
-            border-left: 4px solid #ff9800;
+        .practical-note {
+            background: #fff9e6;
+            border: 1px solid #ffe58f;
             padding: 15px;
+            border-radius: 6px;
             margin: 20px 0;
-            font-size: 0.95rem;
-            color: #8a6d3b;
-            border-radius: 5px;
         }
 
-        .teaching-point {
-            background: #eaf7f9;
-            border-left: 4px solid var(--info);
-            padding: 10px 15px;
-            margin: 15px 0;
-            font-size: 0.9rem;
-            font-style: italic;
-            color: #31708f;
-            border-radius: 5px;
-        }
-
-        /* --- Drawing Canvas Styling --- */
-        .drawing-canvas {
-            border: 1px dashed var(--info);
-            background: rgba(255, 255, 255, 0.7);
-            display: block;
-            margin: 20px auto;
-            border-radius: 8px;
-            cursor: crosshair;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .drawing-canvas:hover { border-color: var(--secondary); }
-
-        /* --- Global Toolbar for Drawing Controls --- */
-        .toolbar {
-            position: fixed;
-            top: 20px; /* Changed to top for more lecture space */
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dark);
-            padding: 10px 20px;
-            border-radius: 50px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .tool-btn {
-            background: transparent;
-            border: 1px solid white;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .tool-btn:hover:not(.active) { background: #444; }
-        .tool-btn.active { background: var(--secondary); border-color: var(--secondary); }
-
-        .color-picker {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.2s;
-        }
-        .color-picker.selected { border-color: var(--secondary); }
-
-        .size-slider {
-            width: 80px;
-            vertical-align: middle;
-        }
-
-        /* Quiz UI */
-        .option { display: block; width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; text-align: left; }
-        .correct { background: var(--success) !important; color: white; }
-        .wrong { background: var(--danger) !important; color: white; }
-
-        footer { text-align: center; padding: 2rem; color: #7f8c8d; font-size: 0.9rem; }
+        footer { text-align: center; color: #888; padding: 40px; }
     </style>
 </head>
 <body>
 
+<canvas id="whiteboard"></canvas>
+
 <div class="toolbar">
-    <button class="tool-btn" id="toggleDrawMode">✏️ Drawing Off</button>
-    <div style="width: 1px; background-color: #555; height: 25px; margin: 0 5px;"></div>
-    <div id="colorPalette" style="display: flex; gap: 5px;">
-        <div class="color-picker selected" style="background-color: #e74c3c;" data-color="#e74c3c"></div>
-        <div class="color-picker" style="background-color: #3498db;" data-color="#3498db"></div>
-        <div class="color-picker" style="background-color: #27ae60;" data-color="#27ae60"></div>
-        <div class="color-picker" style="background-color: #f89820;" data-color="#f89820"></div>
-    </div>
-    <input type="range" id="markerSize" min="1" max="10" value="3" class="size-slider">
-    <button class="tool-btn" onclick="clearAllCanvases()">🗑️ Clear All</button>
+    <span style="color: white; font-size: 12px;">INSTRUCTOR TOOLS:</span>
+    <button class="btn" id="drawToggle">✏️ Marker: OFF</button>
+    <button class="btn" onclick="clearCanvas()">🗑️ Clear Sketch</button>
+    <input type="color" id="markerColor" value="#f39c12">
 </div>
 
 <header>
-    <h1>Java OOP: Advanced Concepts & Interactive Whiteboard</h1>
-    <p>Preparing for Advanced Programming - Beyond the Basics</p>
+    <h1>OOP Practical Review</h1>
+    <p>Essential Foundation for Advanced Java Programming</p>
 </header>
 
-<div class="container">
-    <section class="card">
-        <h2>1. Encapsulation: <span class="badge">State Management & Data Hiding</span></h2>
-        <p>At its core, Encapsulation is about **bundling data (attributes) and methods (behaviors) that operate on the data within a single unit**, and restricting direct access to some of the component's internals.</p>
-        
-        <h3>Beyond Private Variables: Protecting Invariants</h3>
-        <div class="teaching-point">
-            <strong>Teaching Point:</strong> Emphasize that <code>private</code> is just the syntax. The principle is about **maintaining object integrity** and preventing illegal states. Draw a box around the `balance` and `deposit` method, showing how they're a unit.
-        </div>
-        <canvas class="drawing-canvas" data-canvas-id="encap-intro" width="600" height="150"></canvas>
-        <pre>
-public class BankAccount {
-    private double balance; // Crucial state, should not be directly modifiable
-
-    public BankAccount(double initialBalance) {
-        if (initialBalance < 0) {
-            throw new IllegalArgumentException("Initial balance cannot be negative.");
-        }
-        this.balance = initialBalance;
-    }
-
-    // Controlled modification
-    public void deposit(double amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Deposit amount must be positive.");
-        }
-        this.balance += amount;
-    }
-
-    // Read-only access
-    public double getBalance() {
-        return balance;
-    }
-
-    // Bad practice: Exposes internal mutable state, breaking encapsulation
-    // public Date getCreationDate() { return this.creationDate; }
-    // Good practice: Defensive Copying
-    // public Date getCreationDate() { return new Date(this.creationDate.getTime()); }
-}</pre>
-        <div class="advanced-note">
-            <strong>Advanced Concept: Immutability.</strong> For critical data, consider making objects immutable (all fields final, no setters). This inherently guarantees thread safety and simplifies reasoning about state. Example: Java's <code>String</code> class.
-        </div>
-    </section>
-
-    <section class="card">
-        <h2>2. Inheritance: <span class="badge">Specialization & Code Reuse</span></h2>
-        <p>Inheritance allows a class (subclass/child) to acquire the fields and methods of another class (superclass/parent). It models an **"is-a"** relationship, promoting code reuse and forming a hierarchical structure.</p>
-
-        <h3>Composition over Inheritance <small>(Advanced Design Principle)</small></h3>
-        <div class="teaching-point">
-            <strong>Teaching Point:</strong> Explain why "composition over inheritance" is often preferred in advanced design. Draw two diagrams: one showing a deep inheritance hierarchy, and another showing an object "having" capabilities.
-        </div>
-        <canvas class="drawing-canvas" data-canvas-id="inheritance-vs-composition" width="600" height="250"></canvas>
-        <pre>
-// Inheritance (is-a): Not always ideal for behavior reuse
-class Animal { /* ... common animal stuff ... */ }
-class Dog extends Animal { /* ... dog specific stuff ... */ }
-
-// Composition (has-a): More flexible
-interface Flyable { void fly(); }
-class Bird implements Flyable {
-    private Flyable wingMechanism; // Bird "has a" flying mechanism
-    public Bird(Flyable mechanism) { this.wingMechanism = mechanism; }
-    public void fly() { wingMechanism.fly(); }
-}</pre>
-        <div class="advanced-note">
-            <strong>Advanced Concept: Liskov Substitution Principle (LSP).</strong> A subclass should be substitutable for its superclass without altering the correctness of the program. If you have a <code>List&lt;Animal&gt;</code>, replacing an <code>Animal</code> with a <code>Dog</code> should not break the code.
-        </div>
-    </section>
-
-    <section class="card">
-        <h2>3. Abstraction: <span class="badge">Complexity Hiding & Contract Definition</span></h2>
-        <p>Abstraction focuses on hiding the complex implementation details and showing only the necessary features to the user. In Java, this is primarily achieved using **abstract classes** and **interfaces**.</p>
-
-        <h3>Abstract Classes vs. Interfaces: When to Choose Which?</h3>
-        <div class="teaching-point">
-            <strong>Teaching Point:</strong> Draw a Venn diagram or a table contrasting the two. Abstract classes for "base identity with shared state/methods," interfaces for "pure behavior contracts."
-        </div>
-        <canvas class="drawing-canvas" data-canvas-id="abstract-vs-interface" width="600" height="200"></canvas>
-        <pre>
-// Abstract Class: Partial implementation, shared state possible
-abstract class PaymentProcessor {
-    protected String transactionId; // Can have state
-    public PaymentProcessor(String id) { this.transactionId = id; }
-    public abstract void processPayment(double amount); // Abstract method
-    public void logTransaction() { // Concrete method
-        System.out.println("Logging transaction: " + transactionId);
-    }
-}
-
-// Interface: Pure contract, no state
-interface Authenticatable {
-    boolean authenticate(String username, String password); // Only method signature
-    default void resetAttempts() { // Default method in Java 8+
-        System.out.println("Authentication attempts reset.");
-    }
-}</pre>
-        <div class="advanced-note">
-            <strong>Advanced Concept: Functional Interfaces.</strong> Introduced in Java 8, these are interfaces with a single abstract method, enabling Lambda Expressions. Essential for modern Java development (e.g., <code>Runnable</code>, <code>Comparator</code>).
-        </div>
-    </section>
-
-    <section class="card">
-        <h2>4. Polymorphism: <span class="badge">Dynamic Dispatch & Flexible Code</span></h2>
-        <p>Meaning "many forms," Polymorphism allows objects of different classes to be treated as objects of a common superclass or interface. It enables a single interface to represent various underlying forms, primarily through **Method Overriding** (runtime) and **Method Overloading** (compile-time).</p>
-
-        <h3>Runtime vs. Compile-time Polymorphism</h3>
-        <div class="teaching-point">
-            <strong>Teaching Point:</strong> Use the "Animal speaks" analogy. Draw an `Animal` reference pointing to different objects (`Dog`, `Cat`) and show how `makeSound()` behaves differently.
-        </div>
-        <canvas class="drawing-canvas" data-canvas-id="polymorphism-example" width="600" height="250"></canvas>
-        <pre>
-class Animal {
-    public void makeSound() { System.out.println("Animal makes a sound."); }
-}
-
-class Dog extends Animal {
-    @Override // Runtime Polymorphism (Overriding)
-    public void makeSound() { System.out.println("Dog barks!"); }
+<div class="content">
     
-    // Compile-time Polymorphism (Overloading)
-    public void makeSound(String mood) {
-        System.out.println("Dog barks when " + mood);
-    }
-}
-
-public class Zoo {
-    public static void main(String[] args) {
-        Animal myAnimal = new Dog(); // Polymorphism in action!
-        myAnimal.makeSound(); // Calls Dog's makeSound() - dynamic dispatch
+    <div class="lesson-card">
+        <h2>1. Encapsulation: The "Safety Vault"</h2>
+        <p>Before Advanced Java, students must stop thinking of <code>private</code> as just a rule, and start seeing it as <strong>State Protection</strong>.</p>
         
-        Dog myDog = new Dog();
-        myDog.makeSound("happy"); // Calls overloaded method
+        <div class="practical-note">
+            <strong>Easy Analogy:</strong> A Bank ATM. You can't reach inside and grab cash; you must use the buttons (methods) which check your PIN (logic) first.
+        </div>
+
+        <pre>
+public class UserAccount {
+    private double balance; // Hidden state
+
+    // Logic-controlled access
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
     }
 }</pre>
-        <div class="advanced-note">
-            <strong>Advanced Concept: Covariant Return Types.</strong> A method overriding another can return a more specific type than the overridden method, as long as it's a subtype of the original. This enhances flexibility.
-        </div>
-    </section>
+    </div>
 
-    <section class="card quiz-container">
-        <h2>Knowledge Check <span class="badge">Quiz</span></h2>
-        <p>Test your understanding of these advanced OOP principles.</p>
-        <div id="quiz">
-            <div class="question" id="q-text">Loading question...</div>
-            <div id="options"></div>
-            <p id="feedback" style="margin-top: 15px; font-weight: bold;"></p>
-            <button class="tool-btn" id="nextQuestionBtn" style="display: none; margin-top: 20px;">Next Question &raquo;</button>
+    <div class="lesson-card">
+        <h2>2. Inheritance: The "Is-A" Hierarchy</h2>
+        <p>Advanced programming uses Inheritance to define <strong>Types</strong>, not just to copy-paste code.</p>
+        
+        <pre>
+class Employee { // Superclass
+    String name;
+    void work() { System.out.println("Working..."); }
+}
+
+class Developer extends Employee { // Subclass
+    void code() { System.out.println("Writing Java..."); }
+}</pre>
+    </div>
+
+    <div class="lesson-card">
+        <h2>3. Polymorphism: "Many Forms"</h2>
+        <p>This is the most critical concept for Advanced classes. It allows one variable to act differently at runtime.</p>
+        
+        <div class="practical-note">
+            <strong>Practical Example:</strong> A "Play" button on your phone. It plays Music, Video, or Podcasts. One button, many behaviors.
         </div>
-    </section>
+
+        <pre>
+Animal myPet = new Dog(); // Reference is Animal, Object is Dog
+myPet.makeSound(); // JVM chooses Dog's sound at runtime!</pre>
+    </div>
+
 </div>
 
 <footer>
-    Advanced Programming Course - Pre-class OOP Review | Instructor Tool @ 2026
+    Advanced Programming Prep | Generated for GitHub & Teaching
 </footer>
 
 <script>
-    // --- DRAWING LOGIC ---
-    const drawingCanvases = {}; // Stores contexts for each canvas
-    const allCanvases = document.querySelectorAll('.drawing-canvas');
-    let isDrawingEnabled = false;
-    let currentStrokeColor = '#e74c3c';
-    let currentStrokeSize = 3;
+    const canvas = document.getElementById('whiteboard');
+    const ctx = canvas.getContext('2d');
+    const drawBtn = document.getElementById('drawToggle');
+    const colorPicker = document.getElementById('markerColor');
+    
+    let drawing = false;
+    let isMarkerOn = false;
 
-    // Initialize all drawing canvases
-    allCanvases.forEach(canvas => {
-        const id = canvas.dataset.canvasId;
-        drawingCanvases[id] = canvas.getContext('2d');
-        canvas.width = 600; // Consistent width
-        canvas.height = parseInt(canvas.getAttribute('height')) || 200; // Use specified height or default
-        
-        let isDrawing = false;
-        const ctx = drawingCanvases[id];
+    // Resize canvas to full screen
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.onresize = resize;
+    resize();
 
-        canvas.addEventListener('mousedown', (e) => {
-            if (!isDrawingEnabled) return;
-            isDrawing = true;
-            ctx.beginPath();
-            ctx.moveTo(e.offsetX, e.offsetY);
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (!isDrawing || !isDrawingEnabled) return;
-            ctx.lineWidth = currentStrokeSize;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = currentStrokeColor;
-            ctx.lineTo(e.offsetX, e.offsetY);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(e.offsetX, e.offsetY);
-        });
-
-        canvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-            ctx.beginPath(); // Reset path for next stroke
-        });
-
-        canvas.addEventListener('mouseleave', () => {
-            isDrawing = false;
-            ctx.beginPath(); // Reset path if mouse leaves while drawing
-        });
+    // Toggle Drawing Mode
+    drawBtn.addEventListener('click', () => {
+        isMarkerOn = !isMarkerOn;
+        canvas.style.pointerEvents = isMarkerOn ? 'auto' : 'none';
+        drawBtn.textContent = isMarkerOn ? '✏️ Marker: ON' : '✏️ Marker: OFF';
+        drawBtn.classList.toggle('active');
     });
 
-    // Toolbar controls
-    const toggleDrawModeBtn = document.getElementById('toggleDrawMode');
-    toggleDrawModeBtn.addEventListener('click', () => {
-        isDrawingEnabled = !isDrawingEnabled;
-        toggleDrawModeBtn.textContent = isDrawingEnabled ? '✏️ Drawing On' : '✏️ Drawing Off';
-        toggleDrawModeBtn.classList.toggle('active');
-        allCanvases.forEach(canvas => {
-            canvas.style.cursor = isDrawingEnabled ? 'crosshair' : 'default';
-        });
-    });
+    // Drawing Logic
+    canvas.addEventListener('mousedown', startPosition);
+    canvas.addEventListener('mouseup', finishedPosition);
+    canvas.addEventListener('mousemove', draw);
 
-    // Color picker
-    document.getElementById('colorPalette').addEventListener('click', (e) => {
-        if (e.target.classList.contains('color-picker')) {
-            document.querySelectorAll('.color-picker').forEach(cp => cp.classList.remove('selected'));
-            e.target.classList.add('selected');
-            currentStrokeColor = e.target.dataset.color;
-        }
-    });
-
-    // Marker size slider
-    document.getElementById('markerSize').addEventListener('input', (e) => {
-        currentStrokeSize = parseInt(e.target.value);
-    });
-
-    // Clear all canvases
-    function clearAllCanvases() {
-        if (confirm("Are you sure you want to clear all drawings?")) {
-            Object.values(drawingCanvases).forEach(ctx => {
-                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            });
-        }
+    function startPosition(e) {
+        if (!isMarkerOn) return;
+        drawing = true;
+        draw(e);
     }
 
-    // --- QUIZ LOGIC ---
-    const quizData = [
-        {
-            q: "Encapsulation isn't just about 'private' fields. What is a key advanced benefit related to preventing state corruption?",
-            options: [
-                "It automatically generates getter and setter methods.",
-                "It protects object invariants and internal data integrity.",
-                "It makes classes easier to extend via inheritance.",
-                "It speeds up compilation time."
-            ],
-            correct: 1,
-            feedback: "Correct! The goal is to ensure the object's internal state remains valid and consistent."
-        },
-        {
-            q: "Which design principle suggests using 'has-a' relationships over 'is-a' for greater flexibility and reduced coupling?",
-            options: [
-                "Liskov Substitution Principle",
-                "Don't Repeat Yourself (DRY)",
-                "Composition over Inheritance",
-                "Single Responsibility Principle (SRP)"
-            ],
-            correct: 2,
-            feedback: "Exactly! Composition allows you to combine behaviors without creating rigid hierarchies."
-        },
-        {
-            q: "What is a primary functional difference between an `abstract class` and an `interface` in Java (pre-Java 8 default methods)?",
-            options: [
-                "Only interfaces can have concrete methods.",
-                "Only abstract classes can have constructors and maintain state.",
-                "Abstract classes can be instantiated, interfaces cannot.",
-                "Interfaces allow for multiple inheritance of state."
-            ],
-            correct: 1,
-            feedback: "Right! Abstract classes can be partially implemented and hold instance variables, unlike older interfaces."
-        },
-        {
-            q: "In Java, what does 'Dynamic Method Dispatch' primarily relate to in Polymorphism?",
-            options: [
-                "How methods are overloaded based on arguments.",
-                "The process of selecting which overridden method to execute at runtime.",
-                "The ability to define methods in an abstract class.",
-                "Compiling code with different versions of a method."
-            ],
-            correct: 1,
-            feedback: "Perfect! It's the JVM deciding which specific overridden method implementation to call based on the actual object type at runtime."
-        }
-    ];
-
-    let currentQuizQ = 0;
-    const nextQuestionBtn = document.getElementById('nextQuestionBtn');
-
-    function loadQuizQuestion() {
-        const q = quizData[currentQuizQ];
-        document.getElementById('q-text').innerText = `Q${currentQuizQ + 1}: ${q.q}`;
-        const optionsDiv = document.getElementById('options');
-        optionsDiv.innerHTML = '';
-        document.getElementById('feedback').innerText = '';
-        nextQuestionBtn.style.display = 'none';
-
-        q.options.forEach((opt, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'option';
-            btn.innerText = opt;
-            btn.onclick = (e) => checkQuizAnswer(i, btn);
-            optionsDiv.appendChild(btn);
-        });
+    function finishedPosition() {
+        drawing = false;
+        ctx.beginPath();
     }
 
-    function checkQuizAnswer(idx, clickedButton) {
-        const q = quizData[currentQuizQ];
-        const optionsButtons = document.querySelectorAll('#quiz .option');
+    function draw(e) {
+        if (!drawing || !isMarkerOn) return;
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = colorPicker.value;
 
-        // Disable all options after selection
-        optionsButtons.forEach(btn => btn.disabled = true);
-
-        if (idx === q.correct) {
-            clickedButton.classList.add('correct');
-            document.getElementById('feedback').innerText = `✅ ${q.feedback}`;
-        } else {
-            clickedButton.classList.add('wrong');
-            optionsButtons[q.correct].classList.add('correct'); // Show correct answer
-            document.getElementById('feedback').innerText = `❌ Incorrect. ${q.feedback}`;
-        }
-        nextQuestionBtn.style.display = 'block';
+        ctx.lineTo(e.clientX, e.clientY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(e.clientX, e.clientY);
     }
 
-    nextQuestionBtn.addEventListener('click', () => {
-        currentQuizQ = (currentQuizQ + 1) % quizData.length;
-        loadQuizQuestion();
-    });
-
-    loadQuizQuestion(); // Load the first quiz question on page load
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 </script>
 
 </body>
