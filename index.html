@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java OOP · gentle introduction</title>
+    <title>Java deep dive · inheritance · polymorphism · interfaces</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * {
@@ -13,349 +13,403 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: #ffffff;
-            color: #1a1e2b;
+            font-family: 'Inter', sans-serif;
+            background: #fafcff;
+            color: #13294b;
             line-height: 1.6;
             padding: 2rem 1.5rem;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* headings */
         h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 700;
-            letter-spacing: -0.02em;
-            background: linear-gradient(145deg, #2563eb, #1e3a8a);
+            background: linear-gradient(135deg, #1e2b5e, #2d3b75);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.3rem;
         }
 
         .subhead {
-            font-size: 1.3rem;
-            color: #475569;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 1.2rem;
-            margin-bottom: 2rem;
+            font-size: 1.4rem;
+            color: #3e5775;
+            border-bottom: 2px solid #cbd6e6;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
         }
 
         h2 {
-            font-size: 2rem;
+            font-size: 2.3rem;
             font-weight: 600;
-            color: #1e293b;
-            margin: 2rem 0 1rem 0;
-            border-left: 6px solid #2563eb;
-            padding-left: 1.2rem;
+            color: #1b2b4e;
+            margin: 2.5rem 0 1rem 0;
+            border-left: 8px solid #3b6eff;
+            padding-left: 1.3rem;
         }
 
         h3 {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 600;
-            color: #0f172a;
-            margin: 1.5rem 0 0.8rem 0;
+            color: #1f3a6b;
+            margin: 2rem 0 0.8rem 0;
         }
 
-        /* cards grid */
-        .pillar-grid {
+        /* cards for subsections */
+        .card-deck {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.8rem;
-            margin: 2.5rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
         }
 
         .card {
-            background: #f9fafc;
-            border-radius: 28px;
+            background: white;
+            border-radius: 24px;
             padding: 2rem 1.5rem;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.02);
-            border: 1px solid #e9eef3;
-            transition: all 0.2s;
+            box-shadow: 0 10px 20px -8px rgba(0,20,50,0.1);
+            border: 1px solid #d6e2f0;
+            transition: 0.15s;
         }
 
         .card:hover {
-            border-color: #2563eb;
-            box-shadow: 0 15px 25px -8px rgba(37,99,235,0.1);
-            background: white;
+            border-color: #3b6eff;
+            box-shadow: 0 20px 28px -12px rgba(45,100,230,0.2);
         }
 
-        .card-icon {
-            font-size: 2.2rem;
+        .card h4 {
+            font-size: 1.5rem;
+            color: #21478a;
             margin-bottom: 1rem;
         }
 
-        .card h3 {
-            margin-top: 0;
-            color: #1e3a8a;
-            font-size: 1.6rem;
-        }
-
-        .card p {
-            color: #334155;
-            margin: 0.8rem 0 1.2rem 0;
-        }
-
-        /* code boxes */
-        .code-box {
-            background: #0b1622;
-            color: #e3eaf2;
+        /* code styling */
+        .code-block {
+            background: #0c1422;
+            color: #deedff;
             border-radius: 18px;
-            padding: 1.4rem;
+            padding: 1.5rem;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.95rem;
-            border-left: 5px solid #f59e0b;
+            border-left: 6px solid #f5b342;
             overflow-x: auto;
             white-space: pre;
-            margin: 1rem 0;
-            box-shadow: inset 0 0 0 1px #1e2a3a;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 1px 3px #1f2b3b;
         }
 
-        .code-box.light {
-            background: #f1f5f9;
-            color: #0f172a;
-            border-left-color: #2563eb;
+        .code-block.light {
+            background: #f0f5fd;
+            color: #121f33;
+            border-left-color: #3060e0;
         }
 
-        /* inline code */
-        code {
-            background: #eef2f6;
-            padding: 0.2rem 0.5rem;
-            border-radius: 8px;
+        .inline-code {
+            background: #e4ecf9;
+            padding: 0.25rem 0.8rem;
+            border-radius: 30px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9rem;
-            color: #1e40af;
+            color: #173e7c;
         }
 
-        /* explanation blocks */
-        .concept-block {
-            background: #f8fafd;
-            border-radius: 26px;
-            padding: 2rem;
-            margin: 2.5rem 0;
-            border: 1px solid #dee7f0;
-        }
-
-        .concept-block p {
-            font-size: 1.15rem;
-            color: #1e293b;
-            margin-bottom: 0.8rem;
-        }
-
+        /* pill tags */
         .pill {
             display: inline-block;
-            background: #dbeafe;
-            color: #1e40af;
+            background: #dee9fc;
+            color: #17345c;
             padding: 0.3rem 1.2rem;
             border-radius: 30px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
             margin-bottom: 1rem;
         }
 
-        .comparison {
+        .pill.blue {
+            background: #1f3a8a;
+            color: white;
+        }
+
+        /* comparison side by side */
+        .split {
             display: flex;
             gap: 2rem;
             flex-wrap: wrap;
-            margin-top: 1rem;
+            margin: 2rem 0;
         }
 
-        .comparison > div {
-            flex: 1 1 200px;
-            background: white;
-            border-radius: 20px;
-            padding: 1.4rem;
-            border: 1px solid #dde7f0;
+        .split > div {
+            flex: 1 1 250px;
+            background: #f7faff;
+            border-radius: 24px;
+            padding: 1.8rem;
+            border: 1px solid #c9daf5;
+        }
+
+        /* highlight block */
+        .insight {
+            background: #eef4ff;
+            border-radius: 28px;
+            padding: 2.2rem;
+            margin: 2rem 0;
+            border: 1px solid #b7d0f0;
+        }
+
+        .insight p {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
         }
 
         footer {
             margin-top: 4rem;
-            text-align: center;
-            color: #64748b;
-            font-size: 1rem;
-            border-top: 1px solid #e2e8f0;
             padding-top: 2rem;
+            border-top: 2px solid #cbd6e6;
+            text-align: center;
+            color: #4a6587;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <!-- header -->
-    <h1>☕ Java OOP · basics</h1>
-    <div class="subhead">class · object · encapsulation · interface · inheritance · polymorphism</div>
+    <div class="container">
+        <h1>⚡ inheritance · polymorphism · interfaces</h1>
+        <div class="subhead">one integrated deep dive — all you need for advanced Java</div>
 
-    <!-- CLASS definition -->
-    <h2>📌 1. class</h2>
-    <p>A <strong>class</strong> is a blueprint or template. It describes what data (fields) and behavior (methods) an object will have. <br>Think of it like a cookie cutter — defines shape, but is not a cookie itself.</p>
-    <div class="code-box light">
-// Class definition (blueprint)
-class Car {
-    String color;        // field (data)
-    int speed;
-
-    void accelerate() {  // method (behavior)
-        speed = speed + 10;
-    }
-}</div>
-
-    <!-- OBJECT -->
-    <h2>🔹 2. object</h2>
-    <p>An <strong>object</strong> is an <em>instance</em> of a class. Created with <code>new</code>. It lives in memory and holds actual values.</p>
-    <div class="concept-block" style="background: #ffffff;">
-        <div class="pill">example</div>
-        <div class="comparison">
+        <!-- ============ INHERITANCE SECTION ============ -->
+        <h2>🔹 1. inheritance deep dive</h2>
+        <p><strong>Inheritance</strong> = class acquires fields/methods from another (parent). Java uses <span class="inline-code">extends</span>. Creates an "is‑a" relationship.</p>
+        
+        <div class="split">
             <div>
-                <h4 style="color:#1e3a8a;">🧩 object 1</h4>
-                <div class="code-box" style="margin:0.5rem 0 0; background:#f1f5f9; color:#0f172a;">Car myCar = new Car();
-myCar.color = "red";
-myCar.speed = 0;</div>
-            </div>
-            <div>
-                <h4 style="color:#1e3a8a;">🧩 object 2</h4>
-                <div class="code-box" style="margin:0.5rem 0 0; background:#f1f5f9; color:#0f172a;">Car momsCar = new Car();
-momsCar.color = "blue";
-momsCar.speed = 20;</div>
-            </div>
-        </div>
-        <p style="margin-top:1.5rem;"><code>myCar</code> and <code>momsCar</code> are two separate objects, each with its own <code>color</code> and <code>speed</code>.</p>
-    </div>
-
-    <!-- ENCAPSULATION -->
-    <h2>🔒 3. encapsulation</h2>
-    <p><strong>Encapsulation</strong> = hiding internal data and only allowing controlled access. <br>Use <code>private</code> fields + public getters/setters. Protects from unwanted changes.</p>
-    <div class="code-box light">
-public class BankAccount {
-    private double balance;   // hidden
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void deposit(double amount) {
-        if(amount > 0) {
-            balance = balance + amount;
-        }
-    }
-}</div>
-
-    <!-- INTERFACE -->
-    <h2>📋 4. interface</h2>
-    <p>An <strong>interface</strong> is a contract: it lists methods that a class <em>must</em> implement. <br>Only method signatures (no body). Focus on <strong>what</strong>, not <strong>how</strong>.</p>
-    <div class="code-box light">
-interface Drawable {
-    void draw();   // abstract method (no body)
-}
-
-class Circle implements Drawable {
-    public void draw() {
-        System.out.println("⚪ drawing circle");
-    }
-}
-
-class Square implements Drawable {
-    public void draw() {
-        System.out.println("⬛ drawing square");
-    }
-}</div>
-
-    <!-- INHERITANCE -->
-    <h2>🌿 5. inheritance</h2>
-    <p><strong>Inheritance</strong> = one class acquires fields/methods from another (<code>extends</code>). Promotes reuse. <br>Parent class (superclass) → child class (subclass). Java supports single inheritance.</p>
-    <div class="code-box light">
-class Animal {
+                <span class="pill">superclass / parent</span>
+                <h4 style="margin:0.5rem 0;">Animal (base)</h4>
+                <div class="code-block light" style="margin:1rem 0 0;">class Animal {
+    String name;
     void eat() {
         System.out.println("eating...");
     }
-}
-
-class Dog extends Animal {
+}</div>
+            </div>
+            <div>
+                <span class="pill">subclass / child</span>
+                <h4 style="margin:0.5rem 0;">Dog extends Animal</h4>
+                <div class="code-block light" style="margin:1rem 0 0;">class Dog extends Animal {
     void bark() {
         System.out.println("woof!");
     }
+}</div>
+            </div>
+        </div>
+
+        <div class="insight">
+            <span class="pill blue">key point</span>
+            <p><strong>✔️ reuse:</strong> Dog automatically has <code>name</code> and <code>eat()</code> without rewriting.<br>
+            ✔️ <strong>can add</strong> new members (<code>bark()</code>) or <strong>override</strong> existing ones.<br>
+            ✔️ Java supports <strong>single inheritance</strong> (one direct parent).</p>
+        </div>
+
+        <h3>📚 super keyword · constructor chaining</h3>
+        <p>Use <code>super()</code> to call parent constructor (must be first statement).</p>
+        <div class="code-block">
+class Vehicle {
+    String brand;
+    Vehicle(String brand) {
+        this.brand = brand;
+    }
 }
 
-// Dog inherits eat() from Animal</div>
+class Car extends Vehicle {
+    int doors;
+    Car(String brand, int doors) {
+        super(brand);        // call parent constructor
+        this.doors = doors;
+    }
+}</div>
 
-    <!-- POLYMORPHISM -->
-    <h2>🌀 6. polymorphism</h2>
-    <p><strong>Polymorphism</strong> = "many forms". Same method name, different behavior.</p>
-    <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin: 1rem 0;">
-        <div style="flex:1; background: #f8fafc; border-radius: 20px; padding: 1.5rem;">
-            <h4 style="color:#2563eb;">⚡ compile‑time (overloading)</h4>
-            <p>Same class, same method name, different parameters.</p>
-            <div class="code-box" style="margin-top:0.5rem;">class MathUtils {
-    int add(int a, int b) { return a+b; }
-    int add(int a, int b, int c) { return a+b+c; }
+        <h3>🧬 method overriding + @Override</h3>
+        <p>Child redefines a parent method. Same signature, different implementation.</p>
+        <div class="split">
+            <div>
+                <h4>parent</h4>
+                <div class="code-block light">class Animal {
+    void sound() {
+        System.out.println("generic sound");
+    }
+}</div>
+            </div>
+            <div>
+                <h4>child (overrides)</h4>
+                <div class="code-block light">class Cat extends Animal {
+    @Override
+    void sound() {
+        System.out.println("meow");
+    }
+}</div>
+            </div>
+        </div>
+
+        <!-- ============ POLYMORPHISM SECTION ============ -->
+        <h2>🌀 2. polymorphism (many forms)</h2>
+        <p><strong>Polymorphism</strong> = same method name behaves differently based on object. Two types: compile‑time (overloading) & runtime (overriding).</p>
+
+        <div class="card-deck">
+            <div class="card">
+                <h4>⚙️ overloading</h4>
+                <p>Same class, same method name, <strong>different parameters</strong>. Compiler decides at compile time.</p>
+                <div class="code-block light" style="font-size:0.9rem;">class Printer {
+    void print(int i) {
+        System.out.println(i);
+    }
+    void print(String s) {
+        System.out.println(s);
+    }
+    void print(int i, String s) { }
+}</div>
+            </div>
+            <div class="card">
+                <h4>✨ overriding (runtime)</h4>
+                <p>Subclass provides specific implementation. JVM chooses method based on <strong>actual object type</strong> (dynamic dispatch).</p>
+                <div class="code-block light" style="font-size:0.9rem;">Animal a = new Cat();
+a.sound();   // "meow" (Cat's version)</div>
+            </div>
+        </div>
+
+        <div class="insight">
+            <span class="pill blue">🔁 polymorphic collections</span>
+            <p>Store different objects as parent type, call overridden methods — all invoke the correct subclass version.</p>
+            <div class="code-block" style="margin-top:1rem;">Animal[] pets = {new Dog(), new Cat(), new Animal()};
+for (Animal a : pets) {
+    a.sound();   // Dog's bark? Cat's meow? Animal's generic?
 }</div>
         </div>
-        <div style="flex:1; background: #f8fafc; border-radius: 20px; padding: 1.5rem;">
-            <h4 style="color:#2563eb;">✨ runtime (overriding)</h4>
-            <p>Subclass redefines a parent method.</p>
-            <div class="code-box" style="margin-top:0.5rem;">Animal a = new Dog();
-a.eat();   // Dog's version if overridden</div>
-        </div>
-    </div>
 
-    <!-- quick reference summary table -->
-    <h2 style="margin-top: 3rem;">📘 concept summary</h2>
-    <div style="background: white; border-radius: 24px; border: 1px solid #d0ddee; overflow: hidden; margin: 2rem 0;">
-        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr; background: #f1f6fd; font-weight: 700; padding: 1rem; border-bottom: 2px solid #b7c9e2;">
-            <div>concept</div>
-            <div>what is it?</div>
-            <div>key syntax</div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 1rem; border-bottom: 1px solid #dbe4f0;">
-            <div>class</div>
-            <div>blueprint</div>
-            <div><code>class MyClass { }</code></div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 1rem; border-bottom: 1px solid #dbe4f0;">
-            <div>object</div>
-            <div>instance of class</div>
-            <div><code>new MyClass()</code></div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 1rem; border-bottom: 1px solid #dbe4f0;">
-            <div>encapsulation</div>
-            <div>data hiding + access control</div>
-            <div><code>private</code> fields, getters/setters</div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 1rem; border-bottom: 1px solid #dbe4f0;">
-            <div>interface</div>
-            <div>contract of methods</div>
-            <div><code>interface I { void m(); }</code></div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 1rem; border-bottom: 1px solid #dbe4f0;">
-            <div>inheritance</div>
-            <div>class extends another</div>
-            <div><code>class Child extends Parent</code></div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 1rem;">
-            <div>polymorphism</div>
-            <div>many forms (overload/override)</div>
-            <div>same method name, diff behavior</div>
-        </div>
-    </div>
+        <!-- ============ INTERFACES SECTION ============ -->
+        <h2>📐 3. interfaces · contract · design</h2>
+        <p>An <strong>interface</strong> defines a contract: what methods a class must implement. No method bodies (before Java 8 default methods). Supports multiple inheritance of type.</p>
 
-    <!-- friendly reminder -->
-    <div style="background: #eef9ff; border-radius: 30px; padding: 2rem; margin: 2.5rem 0; border: 1px solid #b8d3f0;">
-        <span class="pill" style="background: #2563eb; color:white;">✨ keep it simple</span>
-        <h3 style="margin-top:0.2rem;">Java OOP in a nutshell</h3>
-        <p style="font-size:1.2rem;">✔️ <strong>Class</strong> = plan · <strong>Object</strong> = real thing<br>
-        ✔️ <strong>Encapsulation</strong> = hide data, protect<br>
-        ✔️ <strong>Interface</strong> = what you must do<br>
-        ✔️ <strong>Inheritance</strong> = reuse from parent<br>
-        ✔️ <strong>Polymorphism</strong> = one name, many actions</p>
-    </div>
+        <div class="split">
+            <div>
+                <span class="pill">interface definition</span>
+                <div class="code-block light">interface Flyable {
+    void fly();   // abstract
+}</div>
+            </div>
+            <div>
+                <span class="pill">implementation</span>
+                <div class="code-block light">class Bird implements Flyable {
+    public void fly() {
+        System.out.println("bird flying");
+    }
+}</div>
+            </div>
+        </div>
 
-    <footer>
-        ☕ java basics — each concept with simple explanation and code · ready for next step
-    </footer>
-</div>
+        <h3>🧩 multiple interfaces</h3>
+        <p>Java class can implement <strong>multiple interfaces</strong> (unlike inheritance).</p>
+        <div class="code-block">
+interface Swimmer { void swim(); }
+interface Runner { void run(); }
+
+class Athlete implements Swimmer, Runner {
+    public void swim() { }
+    public void run() { }
+}</div>
+
+        <div class="insight">
+            <span class="pill blue">🔀 interface vs abstract class</span>
+            <p style="margin-top:0.5rem;"><strong>Interface</strong> = pure contract (what). <strong>Abstract class</strong> = partial implementation + state. Use interface for capability/mixin.</p>
+        </div>
+
+        <h3>🌐 default methods (Java 8+)</h3>
+        <p>Interfaces can have default methods with body — backward compatibility.</p>
+        <div class="code-block light">
+interface Flyable {
+    default void land() {
+        System.out.println("landing...");
+    }
+}</div>
+
+        <!-- ============ BRINGING IT TOGETHER ============ -->
+        <h2 style="margin-top:3rem;">🧪 all together: inheritance + interface + polymorphism</h2>
+        <p>Class <code>Penguin</code> extends <code>Animal</code> and implements <code>Swimmer</code> + <code>Walker</code>.</p>
+        <div class="code-block" style="font-size:0.9rem;">
+interface Swimmer { void swim(); }
+interface Walker { void walk(); }
+
+class Animal {
+    String name;
+    Animal(String name) { this.name = name; }
+    void eat() { System.out.println(name + " eats"); }
+}
+
+class Penguin extends Animal implements Swimmer, Walker {
+    Penguin(String name) { super(name); }
+
+    @Override
+    public void swim() {
+        System.out.println(name + " glides through water");
+    }
+
+    @Override
+    public void walk() {
+        System.out.println(name + " waddles");
+    }
+}
+
+// polymorphic usage
+Swimmer s = new Penguin("Pingu");
+s.swim();   // ✓
+Walker w = new Penguin("Pingu");
+w.walk();   // ✓</div>
+
+        <!-- quick comparison table -->
+        <h2>📋 concept comparison</h2>
+        <div style="background:white; border-radius:28px; border:1px solid #c9d9f0; overflow:hidden; margin:2rem 0;">
+            <div style="display:grid; grid-template-columns:1.3fr 2fr 2fr; background:#e9f0fa; font-weight:700; padding:1rem;">
+                <div>feature</div>
+                <div>inheritance</div>
+                <div>interface</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1.3fr 2fr 2fr; padding:1rem; border-bottom:1px solid #dbe4f0;">
+                <div>purpose</div>
+                <div>code reuse, is‑a</div>
+                <div>contract, capability</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1.3fr 2fr 2fr; padding:1rem; border-bottom:1px solid #dbe4f0;">
+                <div>keyword</div>
+                <div><code>extends</code></div>
+                <div><code>implements</code></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1.3fr 2fr 2fr; padding:1rem; border-bottom:1px solid #dbe4f0;">
+                <div>multiple</div>
+                <div>single (one parent)</div>
+                <div>many interfaces</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1.3fr 2fr 2fr; padding:1rem;">
+                <div>polymorphism</div>
+                <div>via overriding</div>
+                <div>via interface type</div>
+            </div>
+        </div>
+
+        <!-- final insight: how they team up -->
+        <div style="background: #ddeeff; border-radius: 32px; padding: 2.5rem; margin: 2.5rem 0;">
+            <span class="pill" style="background: #21478a; color:white;">🚀 takeaway</span>
+            <h3 style="color:#122b50;">inheritance + polymorphism + interfaces = flexible design</h3>
+            <p style="font-size:1.2rem;">✔️ <strong>Inheritance</strong> shares common code.<br>
+            ✔️ <strong>Polymorphism</strong> lets you treat different objects uniformly.<br>
+            ✔️ <strong>Interfaces</strong> define what objects can do — multiple roles.</p>
+        </div>
+
+        <footer>
+            ☕ java OOP- Review
+        </footer>
+    </div>
 </body>
 </html>
