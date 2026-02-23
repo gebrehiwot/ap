@@ -163,18 +163,6 @@
             border: 1px solid #9bb9ed;
         }
 
-        .draw-note {
-            background: #e2edff;
-            border: 3px dashed #3065b5;
-            border-radius: 40px;
-            padding: 1.5rem 2rem;
-            margin: 2rem 0 0;
-            font-size: 1.2rem;
-            color: #052250;
-            font-weight: 500;
-            text-align: center;
-        }
-
         .two-col {
             display: flex;
             gap: 2rem;
@@ -257,7 +245,6 @@ Student s2 = new Student();
 s2.name = "Bob";</div>
             </div>
         </div>
-        <div class="draw-note">✏️ draw class stamp → stamps out s1, s2. each has own name.</div>
     </div>
 
     <!-- ========== SECTION 2: ENCAPSULATION ========== -->
@@ -276,7 +263,6 @@ public class BankAccount {
         return balance;
     }
 }</div>
-        <div class="draw-note">✏️ draw wall around balance, only deposit/getBalance as gates.</div>
     </div>
 
     <!-- ========== SECTION 3: INHERITANCE ========== -->
@@ -309,7 +295,6 @@ class Vehicle {
 class Car extends Vehicle {
     Car(String b) { super(b); }
 }</div>
-        <div class="draw-note">✏️ arrow Dog → Animal, plus super() link.</div>
     </div>
 
     <!-- ========== SECTION 4: POLYMORPHISM ========== -->
@@ -339,7 +324,6 @@ class Cat extends Animal {
         <div class="code">
 Animal[] pets = {new Dog(), new Cat()};
 for (Animal a : pets) a.eat(); // dynamic dispatch</div>
-        <div class="draw-note">✏️ array points to Dog/Cat, arrows to overridden eat().</div>
     </div>
 
     <!-- ========== SECTION 5: INTERFACE ========== -->
@@ -365,7 +349,6 @@ class Athlete implements Swimmer, Runner {
     public void swim() { }
     public void run() { }
 }</div>
-        <div class="draw-note">✏️ interface = sticky note of required methods. class signs.</div>
     </div>
 
     <!-- ========== SECTION 6: ABSTRACT CLASS ========== -->
@@ -384,7 +367,6 @@ class Circle extends Shape {
     double radius;
     double area() { return 3.14 * radius * radius; }
 }</div>
-        <div class="draw-note">✏️ abstract = ghost class. Circle fills in area().</div>
     </div>
 
     <!-- ========== SECTION 7: EXCEPTIONS ========== -->
@@ -416,7 +398,6 @@ try {
 } finally {
     System.out.println("always runs");
 }</div>
-        <div class="draw-note">✏️ try as protective bubble, catch as net, finally always runs.</div>
     </div>
 
     <!-- ========== FINAL INTEGRATED PROJECT ========== -->
@@ -513,9 +494,6 @@ public class Zoo {
     }
 }</div>
             <p style="color:#fef7e7;">✅ <strong>demonstrates:</strong> class/object, encapsulation (private name), inheritance (Lion/Penguin extends Animal), interface (Feedable/Trainable), polymorphism (Animal array + makeSound()), exceptions (Lion feed throws).</p>
-        </div>
-        <div class="draw-note" style="margin-top:2rem;">
-            ✏️ draw class diagram: Animal ← Lion, Penguin ; Feedable/Trainable interfaces; show flow of feed() exception.
         </div>
     </div>
 
