@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java OOP · complete foundation · class to project</title>
+    <title>Java OOP · complete foundation · class to project + zoom</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * {
@@ -32,32 +32,34 @@
             touch-action: none;
         }
 
-        /* toolbar */
+        /* toolbar - now with zoom button */
         .toolbar {
             position: fixed;
             top: 20px;
             right: 30px;
             z-index: 10001;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.95);
             backdrop-filter: blur(8px);
             border-radius: 50px;
             padding: 10px 20px;
             border: 1px solid #a0bde0;
             box-shadow: 0 10px 30px rgba(0,30,70,0.2);
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .toolbar button {
             background: white;
             border: 1.5px solid #1e3f7a;
-            padding: 8px 22px;
+            padding: 8px 18px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: 0.1s;
+            white-space: nowrap;
         }
 
         .toolbar button.active {
@@ -72,12 +74,71 @@
             color: #7a3a0a;
         }
 
+        .toolbar button.zoomBtn {
+            background: #e2f0da;
+            border-color: #2e7d32;
+            color: #1b5e20;
+        }
+
         .toolbar input[type="color"] {
-            width: 48px;
+            width: 40px;
             height: 38px;
             border-radius: 30px;
             border: 2px solid white;
             cursor: pointer;
+        }
+
+        /* zoom overlay - appears when zooming */
+        .zoom-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 20000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+
+        .zoom-box {
+            background: white;
+            border-radius: 40px;
+            padding: 3rem;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            position: relative;
+            cursor: default;
+        }
+
+        .zoom-box pre, .zoom-box code, .zoom-box p {
+            font-size: 2rem !important;
+            line-height: 1.5 !important;
+        }
+
+        .zoom-box .code {
+            font-size: 1.8rem !important;
+            padding: 2.5rem !important;
+        }
+
+        .zoom-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2rem;
+            background: #f0f0f0;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         /* main lecture container */
@@ -107,6 +168,12 @@
             margin-bottom: 1rem;
             border-left: 12px solid #f5a841;
             padding-left: 1.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .topic-title:hover {
+            background: #fff0d0;
         }
 
         .topic-sub {
@@ -121,6 +188,11 @@
             font-weight: 600;
             color: #1d3d72;
             margin: 1.5rem 0 0.3rem;
+            cursor: pointer;
+        }
+
+        h4:hover {
+            background: #fff0d0;
         }
 
         p {
@@ -141,6 +213,13 @@
             white-space: pre;
             margin: 2rem 0;
             box-shadow: inset 0 2px 5px #1f3349;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .code:hover {
+            transform: scale(1.01);
+            box-shadow: 0 10px 25px rgba(0,50,100,0.3);
         }
 
         .code.light {
@@ -161,6 +240,11 @@
             display: inline-block;
             margin-bottom: 1rem;
             border: 1px solid #9bb9ed;
+            cursor: pointer;
+        }
+
+        .pill:hover {
+            background: #c5dbff;
         }
 
         .two-col {
@@ -176,6 +260,11 @@
             border-radius: 30px;
             padding: 2rem;
             border: 1px solid #c0d6f2;
+            cursor: pointer;
+        }
+
+        .two-col > div:hover {
+            background: #e3f0ff;
         }
 
         .project-box {
@@ -185,6 +274,11 @@
             padding: 3rem;
             margin-top: 2rem;
             border: 2px solid #f5a841;
+            cursor: pointer;
+        }
+
+        .project-box:hover {
+            background: #1c3f68;
         }
 
         .project-box h3 {
@@ -204,6 +298,21 @@
             border-top: 2px solid #c4d6f0;
             margin-top: 2rem;
         }
+
+        /* instruction badge */
+        .zoom-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.8);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            z-index: 10001;
+            border: 1px solid #1e3f7a;
+            color: #102b47;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -214,19 +323,32 @@
     <button id="penBtn">✏️ DRAW: OFF</button>
     <button id="clearBtn" class="clearBtn">🧽 CLEAR</button>
     <input type="color" id="penColor" value="#d45d00">
-    <span style="color:#102b47;">whiteboard mode</span>
+    <button id="zoomToggleBtn" class="zoomBtn">🔍 ZOOM: ON</button>
+    <span style="color:#102b47;">click any text to zoom</span>
+</div>
+
+<div class="zoom-hint">
+    🔍 Zoom mode active — click any text/code to enlarge
+</div>
+
+<!-- zoom overlay -->
+<div id="zoomOverlay" class="zoom-overlay" onclick="closeZoom()">
+    <div class="zoom-box" id="zoomContent" onclick="event.stopPropagation()">
+        <div class="zoom-close" onclick="closeZoom()">✕</div>
+        <div id="zoomText"></div>
+    </div>
 </div>
 
 <div class="lecture">
 
     <!-- ========== SECTION 1: CLASS & OBJECT ========== -->
     <div class="topic">
-        <div class="topic-title">📦 1. class & object</div>
-        <p><span class="pill">start here</span> <strong>Class</strong> = blueprint · <strong>Object</strong> = instance in memory.</p>
+        <div class="topic-title" onclick="zoomElement(this)">📦 1. class & object</div>
+        <p><span class="pill" onclick="zoomElement(this)">start here</span> <strong>Class</strong> = blueprint · <strong>Object</strong> = instance in memory.</p>
         <div class="two-col">
-            <div>
+            <div onclick="zoomElement(this)">
                 <h4>📐 class</h4>
-                <div class="code light">
+                <div class="code light" onclick="zoomElement(this)">
 class Student {
     String name;
     int id;
@@ -235,9 +357,9 @@ class Student {
     }
 }</div>
             </div>
-            <div>
+            <div onclick="zoomElement(this)">
                 <h4>🧩 objects</h4>
-                <div class="code light">
+                <div class="code light" onclick="zoomElement(this)">
 Student s1 = new Student();
 s1.name = "Alice";
 
@@ -249,9 +371,9 @@ s2.name = "Bob";</div>
 
     <!-- ========== SECTION 2: ENCAPSULATION ========== -->
     <div class="topic">
-        <div class="topic-title">🔒 2. encapsulation</div>
+        <div class="topic-title" onclick="zoomElement(this)">🔒 2. encapsulation</div>
         <p><strong>private fields, public methods</strong> — protect data integrity.</p>
-        <div class="code">
+        <div class="code" onclick="zoomElement(this)">
 public class BankAccount {
     private double balance;
 
@@ -267,27 +389,27 @@ public class BankAccount {
 
     <!-- ========== SECTION 3: INHERITANCE ========== -->
     <div class="topic">
-        <div class="topic-title">🌿 3. inheritance</div>
+        <div class="topic-title" onclick="zoomElement(this)">🌿 3. inheritance</div>
         <p><code>extends</code> — child gets parent members. "is‑a" relationship.</p>
         <div class="two-col">
-            <div>
+            <div onclick="zoomElement(this)">
                 <h4>parent</h4>
-                <div class="code light">class Animal {
+                <div class="code light" onclick="zoomElement(this)">class Animal {
     void eat() {
         System.out.println("eating");
     }
 }</div>
             </div>
-            <div>
+            <div onclick="zoomElement(this)">
                 <h4>child</h4>
-                <div class="code light">class Dog extends Animal {
+                <div class="code light" onclick="zoomElement(this)">class Dog extends Animal {
     void bark() { }
 }
 // Dog has eat() + bark()</div>
             </div>
         </div>
         <p><strong>super()</strong> calls parent constructor.</p>
-        <div class="code light">
+        <div class="code light" onclick="zoomElement(this)">
 class Vehicle {
     String brand;
     Vehicle(String b) { brand = b; }
@@ -299,20 +421,20 @@ class Car extends Vehicle {
 
     <!-- ========== SECTION 4: POLYMORPHISM ========== -->
     <div class="topic">
-        <div class="topic-title">🌀 4. polymorphism</div>
+        <div class="topic-title" onclick="zoomElement(this)">🌀 4. polymorphism</div>
         <p><strong>many forms</strong> — overloading (compile‑time) & overriding (runtime).</p>
         <div class="two-col">
-            <div>
+            <div onclick="zoomElement(this)">
                 <h4>overloading</h4>
-                <div class="code light">
+                <div class="code light" onclick="zoomElement(this)">
 class Calc {
     int add(int a, int b) { return a+b; }
     int add(int a, int b, int c) { return a+b+c; }
 }</div>
             </div>
-            <div>
+            <div onclick="zoomElement(this)">
                 <h4>overriding</h4>
-                <div class="code light">
+                <div class="code light" onclick="zoomElement(this)">
 class Cat extends Animal {
     @Override
     void eat() {
@@ -321,16 +443,16 @@ class Cat extends Animal {
 }</div>
             </div>
         </div>
-        <div class="code">
+        <div class="code" onclick="zoomElement(this)">
 Animal[] pets = {new Dog(), new Cat()};
 for (Animal a : pets) a.eat(); // dynamic dispatch</div>
     </div>
 
     <!-- ========== SECTION 5: INTERFACE ========== -->
     <div class="topic">
-        <div class="topic-title">📄 5. interface</div>
+        <div class="topic-title" onclick="zoomElement(this)">📄 5. interface</div>
         <p><strong>contract</strong> — what a class must do. <code>implements</code></p>
-        <div class="code">
+        <div class="code" onclick="zoomElement(this)">
 interface Flyable {
     void fly();
 }
@@ -341,7 +463,7 @@ class Bird implements Flyable {
     }
 }</div>
         <h4>multiple interfaces</h4>
-        <div class="code light">
+        <div class="code light" onclick="zoomElement(this)">
 interface Swimmer { void swim(); }
 interface Runner { void run(); }
 
@@ -353,9 +475,9 @@ class Athlete implements Swimmer, Runner {
 
     <!-- ========== SECTION 6: ABSTRACT CLASS ========== -->
     <div class="topic">
-        <div class="topic-title">🎭 6. abstract class</div>
+        <div class="topic-title" onclick="zoomElement(this)">🎭 6. abstract class</div>
         <p><strong>partial implementation</strong> — can have abstract + concrete methods. cannot instantiate.</p>
-        <div class="code light">
+        <div class="code light" onclick="zoomElement(this)">
 abstract class Shape {
     abstract double area();
     void display() {
@@ -371,25 +493,25 @@ class Circle extends Shape {
 
     <!-- ========== SECTION 7: EXCEPTIONS ========== -->
     <div class="topic">
-        <div class="topic-title">⚠️ 7. exceptions</div>
+        <div class="topic-title" onclick="zoomElement(this)">⚠️ 7. exceptions</div>
         <p><strong>handle errors</strong> — try, catch, finally, throws, throw.</p>
         <div class="two-col">
-            <div>
+            <div onclick="zoomElement(this)">
                 <h4>checked</h4>
-                <div class="code light">
+                <div class="code light" onclick="zoomElement(this)">
 try {
     Thread.sleep(1000);
 } catch (InterruptedException e) {
     e.printStackTrace();
 }</div>
             </div>
-            <div>
+            <div onclick="zoomElement(this)">
                 <h4>unchecked</h4>
-                <div class="code light">
+                <div class="code light" onclick="zoomElement(this)">
 int x = 10 / 0; // ArithmeticException</div>
             </div>
         </div>
-        <div class="code">
+        <div class="code" onclick="zoomElement(this)">
 try {
     int[] nums = {1,2};
     System.out.println(nums[5]);
@@ -402,11 +524,11 @@ try {
 
     <!-- ========== FINAL INTEGRATED PROJECT ========== -->
     <div class="topic" style="background: #e7f0ff;">
-        <div class="topic-title">🚀 FINAL PROJECT: Zoo Management System</div>
-        <p class="pill" style="background:#f5a841; color:#132e4f;">brings everything together</p>
-        <div class="project-box">
+        <div class="topic-title" onclick="zoomElement(this)">🚀 FINAL PROJECT: Zoo Management System</div>
+        <p class="pill" style="background:#f5a841; color:#132e4f;" onclick="zoomElement(this)">brings everything together</p>
+        <div class="project-box" onclick="zoomElement(this)">
             <h3>🐘 ZooApp – classes, encapsulation, inheritance, interface, polymorphism, exceptions</h3>
-            <div class="code" style="color:#eef5ff;">
+            <div class="code" style="color:#eef5ff;" onclick="zoomElement(this)">
 // --- interfaces ---
 interface Feedable {
     void feed(String food) throws Exception;
@@ -499,8 +621,8 @@ public class Zoo {
 
     <!-- recap flow -->
     <div class="topic">
-        <div class="topic-title">📋 full foundation recap</div>
-        <div style="display:grid; grid-template-columns:1fr 2fr; gap:1rem; background:#e9f2ff; border-radius:36px; padding:2rem;">
+        <div class="topic-title" onclick="zoomElement(this)">📋 full foundation recap</div>
+        <div style="display:grid; grid-template-columns:1fr 2fr; gap:1rem; background:#e9f2ff; border-radius:36px; padding:2rem;" onclick="zoomElement(this)">
             <div><strong>class/object</strong></div><div>blueprint + instance</div>
             <div><strong>encapsulation</strong></div><div>private + getters/setters</div>
             <div><strong>inheritance</strong></div><div>extends, super()</div>
@@ -512,11 +634,57 @@ public class Zoo {
     </div>
 
     <footer>
-        👨‍🏫 from class & object → exceptions → final integrated Zoo project. draw freely.
+        👨‍🏫 from class & object → exceptions → final integrated Zoo project. Click any text to zoom.
     </footer>
 </div>
 
 <script>
+    // Zoom functionality
+    const zoomOverlay = document.getElementById('zoomOverlay');
+    const zoomText = document.getElementById('zoomText');
+    let zoomEnabled = true;
+
+    // Toggle zoom button
+    const zoomToggleBtn = document.getElementById('zoomToggleBtn');
+    zoomToggleBtn.addEventListener('click', () => {
+        zoomEnabled = !zoomEnabled;
+        zoomToggleBtn.textContent = zoomEnabled ? '🔍 ZOOM: ON' : '🔍 ZOOM: OFF';
+        zoomToggleBtn.style.background = zoomEnabled ? '#e2f0da' : '#f0d0d0';
+    });
+
+    // Zoom function
+    window.zoomElement = function(element) {
+        if (!zoomEnabled) return;
+        
+        // Clone the element content
+        const content = element.cloneNode(true);
+        
+        // Remove onclick handlers from cloned content to avoid recursion
+        const allElements = content.querySelectorAll('*');
+        allElements.forEach(el => {
+            el.removeAttribute('onclick');
+        });
+        
+        // Clear and set new content
+        zoomText.innerHTML = '';
+        zoomText.appendChild(content);
+        
+        // Show overlay
+        zoomOverlay.style.display = 'flex';
+    };
+
+    window.closeZoom = function() {
+        zoomOverlay.style.display = 'none';
+    };
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeZoom();
+        }
+    });
+
+    // Whiteboard functionality
     (function() {
         const canvas = document.getElementById('whiteboardCanvas');
         const ctx = canvas.getContext('2d');
