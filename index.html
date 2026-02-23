@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java OOP · from scratch · whiteboard lecture</title>
+    <title>Java OOP · class to exceptions · full lecture flow</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * {
@@ -13,23 +13,21 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: #f6f9fe;
-            color: #13253f;
+            font-family: 'Inter', sans-serif;
+            background: #f2f7ff;
+            color: #102a44;
             line-height: 1.6;
-            min-height: 100vh;
-            position: relative;
         }
 
-        /* CANVAS - whiteboard overlay */
-        #drawingCanvas {
+        /* drawing canvas overlay */
+        #whiteboardCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 10000;
-            pointer-events: none; /* click through by default */
+            pointer-events: none; /* click-through by default */
             cursor: crosshair;
             touch-action: none;
         }
@@ -38,409 +36,464 @@
         .toolbar {
             position: fixed;
             top: 20px;
-            right: 30px;
+            right: 25px;
             z-index: 10001;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255,255,255,0.9);
             backdrop-filter: blur(8px);
-            border: 1px solid #b3c9e5;
-            border-radius: 60px;
-            padding: 10px 18px;
+            border-radius: 50px;
+            padding: 12px 22px;
+            border: 1px solid #a3c0e5;
+            box-shadow: 0 12px 28px rgba(0,35,70,0.2);
             display: flex;
             gap: 15px;
             align-items: center;
-            box-shadow: 0 10px 25px rgba(0, 30, 70, 0.15);
         }
 
         .toolbar button {
             background: white;
-            border: 1px solid #2f57a1;
-            padding: 8px 18px;
+            border: 1.5px solid #1e3f7a;
+            padding: 8px 20px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             cursor: pointer;
-            color: #13253f;
-            transition: 0.1s;
+            color: #102a44;
+            transition: all 0.1s;
         }
 
         .toolbar button.active {
-            background: #1f4a9c;
+            background: #1e4d9c;
             color: white;
-            border-color: #0e2b5c;
+            border-color: #0b2a51;
         }
 
         .toolbar button.clearBtn {
-            background: #ffecdc;
-            border-color: #d8672e;
-            color: #a3410a;
+            background: #ffe9db;
+            border-color: #c75b1e;
+            color: #823a0a;
         }
 
         .toolbar input[type="color"] {
-            width: 48px;
+            width: 50px;
             height: 38px;
             border: 2px solid white;
-            border-radius: 40px;
+            border-radius: 30px;
             cursor: pointer;
         }
 
-        /* main content */
-        .lecture {
+        /* main lecture container */
+        .lecture-container {
             max-width: 1100px;
             margin: 0 auto;
             padding: 3rem 2rem 5rem;
             position: relative;
             z-index: 1;
-            background: transparent;
         }
 
-        /* slide-like sections */
-        .section {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(2px);
+        /* topic blocks */
+        .topic {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(3px);
             border-radius: 48px;
             padding: 3rem 3rem;
-            margin-bottom: 5rem;
-            box-shadow: 0 20px 35px -10px rgba(26, 48, 114, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            margin-bottom: 4rem;
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 20px 40px -15px rgba(18, 52, 106, 0.2);
         }
 
-        .section-title {
+        .topic-title {
             font-size: 3rem;
-            font-weight: 700;
-            color: #0c2b57;
-            margin-bottom: 0.5rem;
-            border-left: 12px solid #f5a342;
+            font-weight: 800;
+            color: #12315e;
+            margin-bottom: 0.8rem;
+            border-left: 12px solid #f5a841;
             padding-left: 1.5rem;
+            letter-spacing: -0.01em;
         }
 
-        .subsection {
-            margin: 2.5rem 0;
-        }
-
-        h3 {
-            font-size: 2rem;
+        .topic-sub {
+            font-size: 1.8rem;
             font-weight: 600;
-            color: #1a3f7a;
-            margin: 1.8rem 0 0.8rem;
+            color: #1d3f72;
+            margin: 2rem 0 1rem;
         }
 
         h4 {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            color: #21478b;
-            margin: 1.2rem 0 0.3rem;
+            color: #1b4480;
+            margin: 1.8rem 0 0.5rem;
         }
 
         p {
             font-size: 1.25rem;
-            margin-bottom: 0.8rem;
-            color: #1d2f4a;
+            margin-bottom: 1rem;
+            color: #142f4f;
         }
 
-        .code {
-            background: #0f1a2c;
-            color: #e2ecff;
+        .code-block {
+            background: #0b1729;
+            color: #e0eeff;
+            font-family: 'JetBrains Mono', monospace;
             padding: 1.8rem;
             border-radius: 28px;
-            font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
-            border-left: 8px solid #f5a342;
+            border-left: 8px solid #f5a841;
             overflow-x: auto;
             white-space: pre;
-            margin: 1.8rem 0;
-            box-shadow: inset 0 1px 4px #1f2e48;
+            margin: 2rem 0;
+            box-shadow: inset 0 2px 5px #1f3145;
         }
 
-        .code.light {
-            background: #e7f0ff;
-            color: #101d36;
-            border-left-color: #2e66c5;
+        .code-block.light {
+            background: #e5f0ff;
+            color: #0e2340;
+            border-left-color: #2c65c7;
         }
 
         .pill {
-            display: inline-block;
-            background: #dbe5fc;
-            color: #11326b;
-            padding: 0.3rem 1.3rem;
-            border-radius: 40px;
+            background: #dde9ff;
+            color: #103368;
+            padding: 0.3rem 1.5rem;
+            border-radius: 30px;
             font-size: 0.85rem;
             font-weight: 700;
-            letter-spacing: 0.5px;
             text-transform: uppercase;
-            margin-bottom: 0.8rem;
-            border: 1px solid #90afe0;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            border: 1px solid #9dbdee;
         }
 
-        .diagram-note {
-            background: #e5efff;
-            border-radius: 30px;
+        .draw-note {
+            background: #e2ecff;
+            border: 3px dashed #3060b0;
+            border-radius: 40px;
             padding: 1.5rem 2rem;
-            margin: 2rem 0;
-            border: 2px dashed #2b5bb3;
-            color: #022049;
-            font-size: 1.2rem;
+            margin: 2rem 0 0.5rem;
             text-align: center;
+            font-size: 1.2rem;
+            color: #052247;
+            font-weight: 500;
         }
 
-        .two-col {
+        .two-grid {
             display: flex;
-            gap: 2rem;
+            gap: 2.2rem;
             flex-wrap: wrap;
             margin: 2rem 0;
         }
 
-        .two-col > div {
+        .two-grid > div {
             flex: 1 1 280px;
-            background: #f1f7ff;
-            border-radius: 26px;
-            padding: 1.8rem;
-            border: 1px solid #b7cdee;
+            background: #f1f8ff;
+            border-radius: 28px;
+            padding: 2rem;
+            border: 1px solid #bed3f5;
         }
 
         footer {
             text-align: center;
             padding: 2rem;
-            color: #4e658b;
-            font-size: 1.1rem;
+            color: #46648b;
+            border-top: 2px solid #c3d6f0;
+            margin-top: 2rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #b3ceff, transparent);
+            margin: 2rem 0;
         }
     </style>
 </head>
 <body>
 
-<canvas id="drawingCanvas"></canvas>
+<canvas id="whiteboardCanvas"></canvas>
 
 <div class="toolbar">
-    <button id="penToggle">🖊️ draw: OFF</button>
-    <button id="clearCanvas" class="clearBtn">🧽 erase board</button>
+    <button id="penBtn">✏️ draw: OFF</button>
+    <button id="clearBtn" class="clearBtn">🧽 clear board</button>
     <input type="color" id="penColor" value="#d45d00">
-    <span style="color:#133155; font-weight:500;">draw anywhere</span>
+    <span style="color:#102a44;">draw over slides</span>
 </div>
 
-<div class="lecture">
+<div class="lecture-container">
 
-    <!-- START: absolutely from the beginning -->
-    <div class="section">
-        <div class="section-title">🧱 1. where it begins: class & object</div>
-        <p><strong>Class</strong> = blueprint. <strong>Object</strong> = real thing built from that blueprint.</p>
-        <div class="two-col">
+    <!-- 1. CLASS & OBJECT (absolute start) -->
+    <div class="topic">
+        <div class="topic-title">1. class & object</div>
+        <p><span class="pill">start here</span> <strong>Class</strong> = blueprint · <strong>Object</strong> = instance (the real thing).</p>
+        <div class="two-grid">
             <div>
-                <span class="pill">blueprint</span>
-                <h4>class Car</h4>
-                <div class="code light">class Car {
-    String color;
-    void drive() {
-        System.out.println("vroom");
+                <h4>📐 class</h4>
+                <div class="code-block light">
+class Student {
+    String name;
+    int age;
+    
+    void study() {
+        System.out.println(name + " is studying");
     }
 }</div>
             </div>
             <div>
-                <span class="pill">instances</span>
-                <h4>objects</h4>
-                <div class="code light">Car c1 = new Car();
-c1.color = "red";
+                <h4>🧩 objects</h4>
+                <div class="code-block light">
+Student s1 = new Student();
+s1.name = "Alice";
 
-Car c2 = new Car();
-c2.color = "blue";</div>
+Student s2 = new Student();
+s2.name = "Bob";</div>
             </div>
         </div>
-        <div class="diagram-note">
-            ✏️  draw two objects (c1, c2) each with its own color.  Class is the blueprint on the side.
+        <div class="draw-note">
+            ✏️ draw: class as a rubber stamp → stamped out objects (s1, s2). each has own name.
         </div>
     </div>
 
-    <!-- 2. Encapsulation -->
-    <div class="section">
-        <div class="section-title">🔒 2. encapsulation</div>
-        <p><strong>Hide data, expose methods.</strong> Use <code>private</code> so nobody messes with internal state directly.</p>
-        <div class="code">
+    <!-- 2. ENCAPSULATION -->
+    <div class="topic">
+        <div class="topic-title">2. encapsulation</div>
+        <p><strong>Hide data, control access</strong> — use <code>private</code> + getters/setters.</p>
+        <div class="code-block">
 public class BankAccount {
-    private double balance;   // hidden
+    private double balance;   // 🔒 hidden
 
-    public void deposit(double amount) {
-        if(amount > 0) balance += amount;
+    public void deposit(double amt) {
+        if(amt > 0) balance += amt;
     }
 
     public double getBalance() {
         return balance;
     }
 }</div>
-        <div class="diagram-note">
-            ✏️  draw a wall around "balance". only deposit() and getBalance() are doors.
+        <div class="draw-note">
+            ✏️ draw a protective wall around 'balance'. only deposit() and getBalance() are gates.
         </div>
     </div>
 
-    <!-- 3. inheritance (starts simple) -->
-    <div class="section">
-        <div class="section-title">🌿 3. inheritance</div>
-        <p><strong>Child gets parent's fields/methods.</strong> <code>extends</code> keyword. reuse!</p>
-        <div class="two-col">
+    <!-- 3. INHERITANCE -->
+    <div class="topic">
+        <div class="topic-title">3. inheritance</div>
+        <p><code>extends</code> — child gets parent's fields/methods. "is‑a" relationship.</p>
+        <div class="two-grid">
             <div>
                 <h4>parent</h4>
-                <div class="code light">class Animal {
+                <div class="code-block light">
+class Animal {
     void eat() {
-        System.out.println("eating");
+        System.out.println("eating...");
     }
 }</div>
             </div>
             <div>
                 <h4>child</h4>
-                <div class="code light">class Dog extends Animal {
+                <div class="code-block light">
+class Dog extends Animal {
     void bark() { }
 }
 // Dog can eat() too</div>
             </div>
         </div>
-        <p>➕ <strong>super()</strong> calls parent constructor.</p>
-        <div class="code light">
+        <p><strong>super()</strong> calls parent constructor.</p>
+        <div class="code-block light">
 class Vehicle {
     String brand;
     Vehicle(String b) { brand = b; }
 }
+
 class Car extends Vehicle {
     Car(String b) { super(b); }
 }</div>
-        <div class="diagram-note">
-            ✏️  arrow from Dog to Animal — "is-a" relationship. Dog inherits eat().
+        <div class="draw-note">
+            ✏️ arrow from Dog to Animal — inherits eat(). add super() link.
         </div>
     </div>
 
-    <!-- 4. polymorphism (gradual) -->
-    <div class="section">
-        <div class="section-title">🌀 4. polymorphism</div>
-        <p><strong>same method, different behavior</strong> – overloading (compile time) & overriding (runtime).</p>
-
-        <h3>⚙️ overloading (same class)</h3>
-        <div class="code light">
-class Math {
-    int add(int a, int b) { return a+b; }
-    int add(int a, int b, int c) { return a+b+c; }
+    <!-- 4. POLYMORPHISM (overloading + overriding) -->
+    <div class="topic">
+        <div class="topic-title">4. polymorphism</div>
+        <p><strong>many forms</strong> — same method name, different behavior.</p>
+        <div class="two-grid">
+            <div>
+                <h4>⚙️ overloading (compile‑time)</h4>
+                <div class="code-block light">
+class Printer {
+    void print(int i) { }
+    void print(String s) { }
+    void print(int i, String s) { }
 }</div>
-
-        <h3>✨ overriding (subclass redefines)</h3>
-        <div class="code light">
-class Animal { void sound() { } }
+            </div>
+            <div>
+                <h4>✨ overriding (runtime)</h4>
+                <div class="code-block light">
 class Cat extends Animal {
     @Override
-    void sound() { System.out.println("meow"); }
+    void eat() {
+        System.out.println("cat eats");
+    }
 }</div>
-
-        <p><strong>polymorphic array:</strong></p>
-        <div class="code">
-Animal[] animals = {new Cat(), new Dog()};
+            </div>
+        </div>
+        <p><strong>polymorphic array example:</strong></p>
+        <div class="code-block">
+Animal[] animals = {new Dog(), new Cat()};
 for (Animal a : animals) {
-    a.sound();   // which sound? → JVM decides at runtime
+    a.eat();   // JVM picks right version
 }</div>
-        <div class="diagram-note">
-            ✏️  draw animals array pointing to Cat object and Dog object. then draw arrow to sound() method versions.
+        <div class="draw-note">
+            ✏️ draw array pointing to Dog and Cat objects, then arrows to overridden eat() methods.
         </div>
     </div>
 
-    <!-- 5. interface -->
-    <div class="section">
-        <div class="section-title">📄 5. interface</div>
-        <p><strong>Contract:</strong> what a class must do, but not how. <code>implements</code>.</p>
-        <div class="code">
+    <!-- 5. INTERFACE -->
+    <div class="topic">
+        <div class="topic-title">5. interface</div>
+        <p><strong>contract</strong> — what a class must do, but not how. <code>implements</code></p>
+        <div class="code-block">
 interface Flyable {
     void fly();   // abstract (no body)
 }
 
 class Bird implements Flyable {
     public void fly() {
-        System.out.println("flap flap");
+        System.out.println("bird flies");
     }
 }</div>
 
-        <h3>📌 multiple interfaces</h3>
-        <div class="code light">
+        <h4>multiple interfaces</h4>
+        <div class="code-block light">
 interface Swimmer { void swim(); }
 interface Runner { void run(); }
 
-class Athlete implements Swimmer, Runner {
+class Triathlete implements Swimmer, Runner {
     public void swim() { }
     public void run() { }
 }</div>
-        <div class="diagram-note">
-            ✏️  interface = sticky note of required methods. class signs contract.
+        <div class="draw-note">
+            ✏️ interface = sticky note of required methods. class signs contract.
         </div>
     </div>
 
-    <!-- 6. bringing it all together (flow) -->
-    <div class="section">
-        <div class="section-title">⚡ all together now</div>
-        <p><code>Penguin</code> extends <code>Animal</code> and implements <code>Swimmer</code>, <code>Walker</code>.</p>
-        <div class="code">
-interface Swimmer { void swim(); }
-interface Walker { void walk(); }
+    <!-- 6. ABSTRACT CLASS (bridge to exceptions) -->
+    <div class="topic">
+        <div class="topic-title">6. abstract class</div>
+        <p><strong>partial implementation</strong> — can have both abstract & concrete methods. cannot instantiate.</p>
+        <div class="code-block light">
+abstract class Shape {
+    abstract double area();   // must be implemented by subclass
 
-class Animal {
-    String name;
-    Animal(String name) { this.name = name; }
-    void eat() { System.out.println(name + " eats"); }
+    void display() {
+        System.out.println("display shape");
+    }
 }
 
-class Penguin extends Animal implements Swimmer, Walker {
-    Penguin(String name) { super(name); }
-    public void swim() { System.out.println(name + " swims"); }
-    public void walk() { System.out.println(name + " waddles"); }
-}
-
-// polymorphic usage:
-Swimmer s = new Penguin("Pingu");
-s.swim();   // ✅
-Walker w = new Penguin("Pingu");
-w.walk();   // ✅</div>
-
-        <div class="diagram-note">
-            ✏️  big drawing: Penguin gets eat() from Animal, plus swim() from Swimmer, walk() from Walker.
+class Circle extends Shape {
+    double area() { return 3.14 * r * r; }
+}</div>
+        <div class="draw-note">
+            ✏️ abstract = ghost class (can't new). concrete subclass fills in area().
         </div>
     </div>
 
-    <!-- 7. quick reference table -->
-    <div class="section">
-        <div class="section-title">📋 recap</div>
-        <div style="display:grid; grid-template-columns:1fr 2fr; gap:1rem; background:#eef3fe; border-radius:30px; padding:2rem;">
-            <div><strong>class</strong></div><div>blueprint</div>
-            <div><strong>object</strong></div><div>instance (new)</div>
-            <div><strong>encapsulation</strong></div><div>private + getters/setters</div>
-            <div><strong>inheritance</strong></div><div>extends, is‑a, super()</div>
-            <div><strong>polymorphism</strong></div><div>overload / override</div>
-            <div><strong>interface</strong></div><div>contract, implements</div>
+    <!-- 7. EXCEPTIONS (checked, unchecked, try-catch) -->
+    <div class="topic">
+        <div class="topic-title">7. exceptions</div>
+        <p><strong>handle runtime errors</strong> — <code>try</code>, <code>catch</code>, <code>finally</code>, <code>throws</code></p>
+
+        <div class="two-grid">
+            <div>
+                <h4>checked exception</h4>
+                <div class="code-block light">
+// must handle or declare
+try {
+    Thread.sleep(1000);
+} catch (InterruptedException e) {
+    e.printStackTrace();
+}</div>
+            </div>
+            <div>
+                <h4>unchecked (RuntimeException)</h4>
+                <div class="code-block light">
+int x = 10 / 0;  // ArithmeticException</div>
+            </div>
+        </div>
+
+        <h4>try-catch-finally</h4>
+        <div class="code-block">
+try {
+    int[] arr = new int[2];
+    System.out.println(arr[5]);
+} catch (ArrayIndexOutOfBoundsException e) {
+    System.out.println("index out of bound!");
+} finally {
+    System.out.println("always runs");
+}</div>
+
+        <h4>throws / throw</h4>
+        <div class="code-block light">
+void readFile() throws IOException {
+    if (someCondition) {
+        throw new IOException("file missing");
+    }
+}</div>
+
+        <div class="draw-note">
+            ✏️ draw try block as protective bubble. if exception → catch net. finally runs regardless.
+        </div>
+    </div>
+
+    <!-- 8. all together (class -> exceptions flow) -->
+    <div class="topic">
+        <div class="topic-title">📈 full flow recap</div>
+        <div style="display:grid; grid-template-columns:1fr 2fr; gap:1rem; background:#edf4ff; border-radius:36px; padding:2.2rem;">
+            <div><strong>class/object</strong></div><div>blueprint & instance</div>
+            <div><strong>encapsulation</strong></div><div>private + methods</div>
+            <div><strong>inheritance</strong></div><div>extends, is-a</div>
+            <div><strong>polymorphism</strong></div><div>overload/override</div>
+            <div><strong>interface</strong></div><div>contract (implements)</div>
+            <div><strong>abstract class</strong></div><div>partial abstraction</div>
+            <div><strong>exceptions</strong></div><div>try/catch/throw</div>
+        </div>
+        <div class="draw-note" style="margin-top:2rem;">
+            ✏️ now draw the whole journey: class → object → encapsulation → inheritance → polymorphism → interface → abstract → exceptions
         </div>
     </div>
 
     <footer>
-        👨‍🏫 keep drawing on the screen — each slide has space to illustrate • start from class & object, flow to interfaces
+        👨‍🏫 whiteboard always on — draw connections, illustrate memory, point to code. from class to exceptions.
     </footer>
 </div>
 
 <script>
     (function() {
-        const canvas = document.getElementById('drawingCanvas');
+        const canvas = document.getElementById('whiteboardCanvas');
         const ctx = canvas.getContext('2d');
-        const penToggle = document.getElementById('penToggle');
-        const clearBtn = document.getElementById('clearCanvas');
+        const penBtn = document.getElementById('penBtn');
+        const clearBtn = document.getElementById('clearBtn');
         const colorPicker = document.getElementById('penColor');
 
         let drawing = false;
-        let penActive = false;   // off → pointer-events: none
+        let penActive = false;   // off => pointer-events none
 
-        function resize() {
+        function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         }
-        window.addEventListener('resize', resize);
-        resize();
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        // toggle pen
-        penToggle.addEventListener('click', () => {
+        penBtn.addEventListener('click', () => {
             penActive = !penActive;
             canvas.style.pointerEvents = penActive ? 'auto' : 'none';
-            penToggle.textContent = penActive ? '🖊️ draw: ON' : '🖊️ draw: OFF';
-            penToggle.classList.toggle('active', penActive);
-            document.body.style.overflow = penActive ? 'hidden' : 'auto'; // prevent scrolling while drawing
+            penBtn.textContent = penActive ? '✏️ draw: ON' : '✏️ draw: OFF';
+            penBtn.classList.toggle('active', penActive);
+            document.body.style.overflow = penActive ? 'hidden' : 'auto';
         });
 
-        // drawing events
+        // mouse events
         canvas.addEventListener('mousedown', (e) => {
             if (!penActive) return;
             drawing = true;
@@ -458,10 +511,10 @@ w.walk();   // ✅</div>
             ctx.stroke();
         });
 
-        canvas.addEventListener('mouseup', () => { drawing = false; });
-        canvas.addEventListener('mouseleave', () => { drawing = false; });
+        canvas.addEventListener('mouseup', () => drawing = false);
+        canvas.addEventListener('mouseleave', () => drawing = false);
 
-        // touch support
+        // touch
         canvas.addEventListener('touchstart', (e) => {
             if (!penActive) return;
             e.preventDefault();
@@ -478,7 +531,6 @@ w.walk();   // ✅</div>
             ctx.lineTo(touch.clientX, touch.clientY);
             ctx.strokeStyle = colorPicker.value;
             ctx.lineWidth = 5;
-            ctx.lineCap = 'round';
             ctx.stroke();
         });
 
@@ -487,11 +539,10 @@ w.walk();   // ✅</div>
             drawing = false;
         });
 
-        // clear canvas
+        // clear
         clearBtn.addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         });
-
     })();
 </script>
 </body>
