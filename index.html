@@ -2,300 +2,108 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java OOP: Advanced Prep Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Advanced OOP Teaching Suite</title>
     <style>
-        :root {
-            --primary: #0d1b2a;
-            --accent: #3a86ff;
-            --java-orange: #f89820;
-            --java-blue: #5382a1;
-            --bg: #f8f9fa;
-            --text: #1b263b;
-        }
+        :root { --primary: #002b36; --accent: #268bd2; --text: #839496; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #073642; color: #eee; display: flex; height: 100vh; }
+        
+        /* Sidebar Navigation */
+        .sidebar { width: 250px; background: var(--primary); padding: 20px; border-right: 1px solid #586e75; }
+        .nav-item { padding: 15px; cursor: pointer; border-radius: 8px; margin-bottom: 10px; transition: 0.3s; }
+        .nav-item:hover { background: #073642; }
+        .nav-item.active { background: var(--accent); color: white; }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            scroll-behavior: smooth;
-        }
+        /* Main Content Area */
+        .main { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+        .section { display: none; }
+        .section.active { display: block; }
 
-        /* Teaching HUD (Heads Up Display) */
-        .hud {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(13, 27, 42, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 15px;
-            border-radius: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .hud-title { color: white; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-
-        .btn {
-            border: none;
-            padding: 10px 15px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-draw { background: var(--accent); color: white; }
-        .btn-clear { background: #ef233c; color: white; }
-        .btn.active { outline: 3px solid white; transform: scale(1.05); }
-
-        /* Layout */
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 100px 20px;
-            text-align: center;
-            background-image: radial-gradient(circle at 20% 30%, #1b263b 0%, #0d1b2a 100%);
-        }
-
-        .container { max-width: 1000px; margin: -60px auto 100px; padding: 0 20px; }
-
-        .section-card {
-            background: white;
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-            border: 1px solid #eee;
-            position: relative;
-            overflow: hidden;
-        }
-
-        h2 { font-size: 2rem; color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 15px; }
-        h2::before { content: ''; width: 8px; height: 35px; background: var(--java-orange); border-radius: 4px; }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
-
-        /* Code & Whiteboard Space */
-        pre {
-            background: #1e1e1e;
-            color: #dcdcdc;
-            padding: 25px;
-            border-radius: 16px;
-            font-family: 'Fira Code', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            border-left: 6px solid var(--java-blue);
-            margin: 0;
-        }
-
-        .canvas-area {
-            border: 2px dashed #cbd5e1;
-            border-radius: 16px;
-            background: #f1f5f9;
-            position: relative;
-            cursor: crosshair;
-        }
-
-        .canvas-label {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 10px;
-            font-weight: 800;
-            color: #94a3b8;
-            pointer-events: none;
-        }
-
-        .pill {
-            background: var(--bg);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--accent);
-            border: 1px solid #dee2e6;
-        }
-
-        footer { text-align: center; padding: 50px; color: #94a3b8; font-weight: 600; }
+        /* Drawing Canvas */
+        #drawCanvas { position: fixed; top: 0; left: 250px; width: calc(100% - 250px); height: 100%; pointer-events: none; z-index: 1000; }
+        .controls { position: fixed; bottom: 20px; right: 20px; z-index: 1001; background: var(--primary); padding: 10px; border-radius: 50px; display: flex; gap: 10px; }
+        
+        pre { background: #002b36; padding: 20px; border-radius: 10px; border-left: 4px solid var(--accent); font-family: 'Consolas', monospace; }
+        .btn { border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        .draw-btn { background: var(--accent); color: white; }
     </style>
 </head>
 <body>
 
-    <div class="hud">
-        <div class="hud-title">Instructor HUD</div>
-        <button class="btn btn-draw" id="drawModeBtn">✏️ Draw: OFF</button>
-        <button class="btn btn-clear" onclick="clearAll()">🗑️ Clear All</button>
-        <input type="color" id="colorPicker" value="#3a86ff" style="width:100%; border:none; height:30px; cursor:pointer;">
+    <nav class="sidebar">
+        <h2>OOP Modules</h2>
+        <div class="nav-item active" onclick="showSection('encap')">1. Encapsulation</div>
+        <div class="nav-item" onclick="showSection('abstract')">2. Abstraction</div>
+        <div class="nav-item" onclick="showSection('inherit')">3. Inheritance</div>
+        <div class="nav-item" onclick="showSection('poly')">4. Polymorphism</div>
+    </nav>
+
+    <canvas id="drawCanvas"></canvas>
+
+    <div class="controls">
+        <button class="btn draw-btn" id="penToggle" onclick="togglePen()">🖋️ Pen: OFF</button>
+        <button class="btn" style="background: #dc322f; color: white;" onclick="clearCanvas()">🗑️ Clear</button>
     </div>
 
-    <header>
-        <h1 style="font-size: 3.5rem; margin: 0;">Java OOP Architecture</h1>
-        <p style="opacity: 0.7; font-size: 1.2rem;">A Flowless Review for Advanced Programming</p>
-    </header>
-
-    <div class="container">
-
-        <div class="section-card">
-            <h2>Encapsulation <span class="pill">State Security</span></h2>
-            <p>Moving beyond simple "getters/setters," teach your students about <strong>Object Integrity</strong>. An object must protect its internal state from invalid data.</p>
-            
-            <div class="grid">
-                <pre>
-public class BankAccount {
+    <div class="main">
+        <div id="encap" class="section active">
+            <h1>Encapsulation</h1>
+            <p>Protecting the internal state. In Advanced Java, we use this to ensure <strong>data integrity</strong>.</p>
+            <pre>
+public class Account {
     private double balance; 
-
-    // Guard Clause pattern
-    public void withdraw(double amount) {
-        if (amount > balance) {
-            throw new InsufficientFundsException();
-        }
-        this.balance -= amount;
+    public void deposit(double amt) {
+        if(amt > 0) balance += amt; // Business Logic Protection
     }
 }</pre>
-                <div class="canvas-area">
-                    <span class="canvas-label">DRAW MEMORY DIAGRAM HERE</span>
-                    <canvas class="teaching-canvas" data-id="c1"></canvas>
-                </div>
-            </div>
         </div>
 
-        <div class="section-card">
-            <h2>Inheritance <span class="pill">Code Reusability</span></h2>
-            <p>Explain the "Is-A" relationship. In Advanced Java, we prefer <strong>Composition</strong> (Has-A) over deep inheritance trees to avoid the "Fragile Base Class" problem.</p>
-            
-            <div class="grid">
-                <div class="canvas-area">
-                    <span class="canvas-label">DRAW CLASS HIERARCHY HERE</span>
-                    <canvas class="teaching-canvas" data-id="c2"></canvas>
-                </div>
-                <pre>
-// INHERITANCE
-class SmartPhone extends Phone { ... }
-
-// COMPOSITION (Better for Advanced)
-class SmartPhone {
-    private Camera camera;
-    private Processor cpu;
+        <div id="abstract" class="section">
+            <h1>Abstraction</h1>
+            <p>Define the <strong>"What"</strong>, hide the <strong>"How"</strong>. Essential for microservices and API design.</p>
+            <pre>
+interface Database {
+    void connect(); // Implementation is hidden
 }</pre>
-            </div>
         </div>
 
-        <div class="section-card">
-            <h2>Abstraction <span class="pill">Contract Design</span></h2>
-            <p>Abstraction is about defining a <strong>contract</strong>. Using <code>interface</code> tells the world <em>what</em> your system can do without exposing <em>how</em> it does it.</p>
-            
-            <div class="grid">
-                <pre>
-public interface CloudStorage {
-    void upload(File file);
-    void download(String id);
-}
-
-// implementation is hidden!
-class AWSService implements CloudStorage { ... }</pre>
-                <div class="canvas-area">
-                    <span class="canvas-label">DRAW INTERFACE FLOW HERE</span>
-                    <canvas class="teaching-canvas" data-id="c3"></canvas>
-                </div>
-            </div>
         </div>
-
-        <div class="section-card" style="border-bottom: 8px solid var(--accent);">
-            <h2>Polymorphism <span class="pill">Dynamic Dispatch</span></h2>
-            <p>The crown jewel of OOP. It allows the JVM to decide which method implementation to run <strong>at runtime</strong> based on the actual object type.</p>
-            
-            <div class="grid">
-                <div class="canvas-area">
-                    <span class="canvas-label">DRAW RUNTIME BINDING HERE</span>
-                    <canvas class="teaching-canvas" data-id="c4"></canvas>
-                </div>
-                <pre>
-List<Shape> shapes = new ArrayList<>();
-shapes.add(new Circle());
-shapes.add(new Square());
-
-for (Shape s : shapes) {
-    s.draw(); // Calls specific version!
-}</pre>
-            </div>
-        </div>
-
-    </div>
-
-    <footer>
-        &copy; 2026 Advanced Programming Prep Dashboard • Created for Instructional Use
-    </footer>
 
     <script>
-        const canvases = document.querySelectorAll('.teaching-canvas');
-        const drawBtn = document.getElementById('drawModeBtn');
-        const colorPicker = document.getElementById('colorPicker');
-        let isDrawingMode = false;
-        let activeCanvas = null;
-        let ctx = null;
-
-        // Initialize Canvases
-        canvases.forEach(canvas => {
-            const parent = canvas.parentElement;
-            canvas.width = parent.offsetWidth;
-            canvas.height = parent.offsetHeight;
-            
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseleave', stopDrawing);
-        });
-
-        function toggleDraw() {
-            isDrawingMode = !isDrawingMode;
-            drawBtn.classList.toggle('active');
-            drawBtn.textContent = isDrawingMode ? '✏️ Draw: ON' : '✏️ Draw: OFF';
-            document.body.style.userSelect = isDrawingMode ? 'none' : 'auto';
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
 
-        drawBtn.addEventListener('click', toggleDraw);
+        const canvas = document.getElementById('drawCanvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+        let penEnabled = false;
 
-        function startDrawing(e) {
-            if (!isDrawingMode) return;
-            activeCanvas = e.target;
-            ctx = activeCanvas.getContext('2d');
-            ctx.beginPath();
-            ctx.moveTo(e.offsetX, e.offsetY);
-            activeCanvas.isDrawing = true;
+        canvas.width = window.innerWidth - 250;
+        canvas.height = window.innerHeight;
+
+        function togglePen() {
+            penEnabled = !penEnabled;
+            canvas.style.pointerEvents = penEnabled ? 'auto' : 'none';
+            document.getElementById('penToggle').innerText = penEnabled ? '🖋️ Pen: ON' : '🖋️ Pen: OFF';
         }
 
-        function draw(e) {
-            if (!isDrawingMode || !e.target.isDrawing) return;
-            ctx.lineTo(e.offsetX, e.offsetY);
-            ctx.strokeStyle = colorPicker.value;
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+        canvas.onmousedown = () => drawing = true;
+        canvas.onmouseup = () => { drawing = false; ctx.beginPath(); };
+        canvas.onmousemove = (e) => {
+            if (!drawing || !penEnabled) return;
             ctx.lineWidth = 3;
             ctx.lineCap = 'round';
+            ctx.strokeStyle = '#b58900';
+            ctx.lineTo(e.clientX - 250, e.clientY);
             ctx.stroke();
-        }
-
-        function stopDrawing(e) {
-            if (e.target.isDrawing) {
-                e.target.isDrawing = false;
-                ctx.closePath();
-            }
-        }
-
-        function clearAll() {
-            canvases.forEach(canvas => {
-                const context = canvas.getContext('2d');
-                context.clearRect(0, 0, canvas.width, canvas.height);
-            });
-        }
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - 250, e.clientY);
+        };
     </script>
 </body>
 </html>
